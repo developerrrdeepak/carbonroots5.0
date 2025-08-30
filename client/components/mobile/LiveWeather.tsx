@@ -1,12 +1,25 @@
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Globe, MapPin, Thermometer, Droplets, Cloud, Wind } from "lucide-react";
+import {
+  Globe,
+  MapPin,
+  Thermometer,
+  Droplets,
+  Cloud,
+  Wind,
+} from "lucide-react";
 
 interface WeatherData {
   temperature: number | null;
@@ -82,7 +95,7 @@ export default function LiveWeather() {
         console.error(err);
         toast.error("Unable to get location");
       },
-      { enableHighAccuracy: true, timeout: 15000 }
+      { enableHighAccuracy: true, timeout: 15000 },
     );
   };
 
@@ -98,12 +111,15 @@ export default function LiveWeather() {
       const params = new URLSearchParams({
         latitude: String(la),
         longitude: String(lo),
-        current: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
+        current:
+          "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
         hourly: "temperature_2m,precipitation_probability,cloud_cover",
         forecast_days: "1",
         timezone: "auto",
       });
-      const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?${params.toString()}`,
+      );
       if (!res.ok) throw new Error("Failed to fetch weather");
       const json = await res.json();
       const cur = json.current || {};
@@ -124,7 +140,11 @@ export default function LiveWeather() {
     }
   };
 
-  const humidityProgress = useMemo(() => (data.humidity == null ? 0 : Math.max(0, Math.min(100, data.humidity))), [data.humidity]);
+  const humidityProgress = useMemo(
+    () =>
+      data.humidity == null ? 0 : Math.max(0, Math.min(100, data.humidity)),
+    [data.humidity],
+  );
 
   return (
     <Card>
@@ -133,25 +153,47 @@ export default function LiveWeather() {
           <Globe className="h-5 w-5" />
           <span>Weather Integration</span>
         </CardTitle>
-        <CardDescription>Local weather and predictions without API keys (Open-Meteo)</CardDescription>
+        <CardDescription>
+          Local weather and predictions without API keys (Open-Meteo)
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
             <div>
               <Label htmlFor="lat">Latitude</Label>
-              <Input id="lat" placeholder="e.g. 28.61" value={lat} onChange={(e) => setLat(e.target.value)} />
+              <Input
+                id="lat"
+                placeholder="e.g. 28.61"
+                value={lat}
+                onChange={(e) => setLat(e.target.value)}
+              />
             </div>
             <div>
               <Label htmlFor="lon">Longitude</Label>
-              <Input id="lon" placeholder="e.g. 77.20" value={lon} onChange={(e) => setLon(e.target.value)} />
+              <Input
+                id="lon"
+                placeholder="e.g. 77.20"
+                value={lon}
+                onChange={(e) => setLon(e.target.value)}
+              />
             </div>
             <div className="flex gap-2">
-              <Button type="button" variant="outline" className="w-full" onClick={getLocation}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={getLocation}
+              >
                 <MapPin className="h-4 w-4 mr-2" />
                 Use GPS
               </Button>
-              <Button type="button" className="w-full" onClick={fetchWeather} disabled={loading}>
+              <Button
+                type="button"
+                className="w-full"
+                onClick={fetchWeather}
+                disabled={loading}
+              >
                 {loading ? "Fetching..." : "Get Weather"}
               </Button>
             </div>
@@ -160,19 +202,29 @@ export default function LiveWeather() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-3 bg-blue-50 rounded-lg">
               <p className="text-xs text-gray-600">Temperature</p>
-              <p className="text-xl font-bold text-blue-700 flex items-center justify-center"><Thermometer className="h-4 w-4 mr-1" />{data.temperature ?? "-"}°C</p>
+              <p className="text-xl font-bold text-blue-700 flex items-center justify-center">
+                <Thermometer className="h-4 w-4 mr-1" />
+                {data.temperature ?? "-"}°C
+              </p>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-xs text-gray-600">Humidity</p>
-              <p className="text-xl font-bold text-green-700 flex items-center justify-center"><Droplets className="h-4 w-4 mr-1" />{data.humidity ?? "-"}%</p>
+              <p className="text-xl font-bold text-green-700 flex items-center justify-center">
+                <Droplets className="h-4 w-4 mr-1" />
+                {data.humidity ?? "-"}%
+              </p>
             </div>
             <div className="text-center p-3 bg-amber-50 rounded-lg">
               <p className="text-xs text-gray-600">Precipitation</p>
-              <p className="text-xl font-bold text-amber-700">{data.precipitation ?? "-"} mm</p>
+              <p className="text-xl font-bold text-amber-700">
+                {data.precipitation ?? "-"} mm
+              </p>
             </div>
             <div className="text-center p-3 bg-purple-50 rounded-lg">
               <p className="text-xs text-gray-600">Wind</p>
-              <p className="text-xl font-bold text-purple-700">{data.wind ?? "-"} km/h</p>
+              <p className="text-xl font-bold text-purple-700">
+                {data.wind ?? "-"} km/h
+              </p>
             </div>
           </div>
 
@@ -187,7 +239,11 @@ export default function LiveWeather() {
           <div>
             <Label className="text-xs text-gray-600">Humidity</Label>
             <Progress value={humidityProgress} />
-            <p className="text-xs text-gray-500 mt-1">{data.time ? `As of ${new Date(data.time).toLocaleString()}` : "No data yet"}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {data.time
+                ? `As of ${new Date(data.time).toLocaleString()}`
+                : "No data yet"}
+            </p>
           </div>
         </div>
       </CardContent>
