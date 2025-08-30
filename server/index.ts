@@ -163,27 +163,31 @@ export function createServer() {
   return app;
 }
 
-// Handle graceful shutdown
-process.on("SIGTERM", async () => {
-  console.log("🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...");
-  try {
-    const Database = await import("./lib/database");
-    await Database.default.getInstance().disconnect();
-    console.log("✅ [SHUTDOWN] Database disconnected successfully");
-  } catch (error) {
-    console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
-  }
-  process.exit(0);
-});
+// Handle graceful shutdown (guard to avoid duplicate listeners on Vite HMR restarts)
+if (!(globalThis as any).__server_shutdown_handlers__) {
+  (globalThis as any).__server_shutdown_handlers__ = true;
 
-process.on("SIGINT", async () => {
-  console.log("🛑 [SHUTDOWN] SIGINT received, shutting down gracefully...");
-  try {
-    const Database = await import("./lib/database");
-    await Database.default.getInstance().disconnect();
-    console.log("✅ [SHUTDOWN] Database disconnected successfully");
-  } catch (error) {
-    console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
-  }
-  process.exit(0);
-});
+  process.on("SIGTERM", async () => {
+    console.log("🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...");
+    try {
+      const Database = await import("./lib/database");
+      await Database.default.getInstance().disconnect();
+      console.log("✅ [SHUTDOWN] Database disconnected successfully");
+    } catch (error) {
+      console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
+    }
+    process.exit(0);
+  });
+
+  process.on("SIGINT", async () => {
+    console.log("🛑 [SHUTDOWN] SIGINT received, shutting down gracefully...");
+    try {
+      const Database = await import("./lib/database");
+      await Database.default.getInstance().disconnect();
+      console.log("✅ [SHUTDOWN] Database disconnected successfully");
+    } catch (error) {
+      console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
+    }
+    process.exit(0);
+  });
+}
