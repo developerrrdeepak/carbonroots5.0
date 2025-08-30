@@ -653,6 +653,12 @@ export const socialAuth: RequestHandler = async (req, res) => {
   }
 };
 
+// Convenience wrapper for explicit Google endpoint
+export const googleAuth: RequestHandler = async (req, res) => {
+  (req as any).params = { provider: "google" };
+  return socialAuth(req, res);
+};
+
 // Social OAuth callback handler
 export const socialCallback: RequestHandler = async (req, res) => {
   try {
