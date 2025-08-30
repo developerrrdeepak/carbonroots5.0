@@ -139,6 +139,9 @@ class Database {
         { unique: true },
       );
 
+      // Settings collection indexes
+      await this.getSettingsCollection().createIndex({ key: 1 }, { unique: true });
+
       console.log("📊 Database indexes created successfully");
     } catch (error) {
       console.error("❌ Failed to create database indexes:", error);
