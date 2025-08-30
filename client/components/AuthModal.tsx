@@ -136,10 +136,15 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}), // Empty body triggers demo mode
+        body: JSON.stringify({}),
       });
 
       const result = await response.json();
+
+      if (result.redirectUrl) {
+        window.location.assign(result.redirectUrl);
+        return;
+      }
 
       if (result.success && result.user && result.token) {
         localStorage.setItem("auth_token", result.token);
