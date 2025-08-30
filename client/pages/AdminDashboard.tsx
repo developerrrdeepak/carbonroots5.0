@@ -99,6 +99,17 @@ export default function AdminDashboard() {
   const [satLatLon, setSatLatLon] = useState("");
   const [iotText, setIotText] = useState("");
 
+  const [showAddFarmer, setShowAddFarmer] = useState(false);
+  const [addFarmer, setAddFarmer] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    landSize: "",
+    landUnit: "acres",
+    state: "",
+    pincode: "",
+  });
+
   if (!isAuthenticated || user?.type !== "admin") {
     return <Navigate to="/" replace />;
   }
