@@ -23,8 +23,10 @@ import {
   getModelInfo,
   getFarmerCarbonHistory,
   batchPredictCarbon,
-  getCarbonStatistics
+  getCarbonStatistics,
 } from "./routes/carbon";
+import { ingestSensorData, getLatestSensorData } from "./routes/iot";
+import { getNDVI } from "./routes/satellite";
 
 export function createServer() {
   const app = express();
@@ -80,6 +82,13 @@ export function createServer() {
   app.get("/api/carbon/history", getFarmerCarbonHistory);
   app.post("/api/carbon/batch-predict", batchPredictCarbon);
   app.get("/api/carbon/statistics", getCarbonStatistics);
+
+  // IoT routes
+  app.post("/api/iot/ingest", ingestSensorData);
+  app.get("/api/iot/latest", getLatestSensorData);
+
+  // Satellite routes
+  app.post("/api/satellite/ndvi", getNDVI);
 
   // Test routes (development only)
   if (process.env.NODE_ENV !== "production") {
@@ -145,6 +154,9 @@ export function createServer() {
         "GET /api/carbon/history",
         "POST /api/carbon/batch-predict",
         "GET /api/carbon/statistics",
+        "POST /api/iot/ingest",
+        "GET /api/iot/latest",
+        "POST /api/satellite/ndvi",
         ...(process.env.NODE_ENV !== "production"
           ? ["POST /api/test/email", "GET /api/test/email-status"]
           : []),

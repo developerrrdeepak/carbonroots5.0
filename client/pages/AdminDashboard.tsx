@@ -96,6 +96,8 @@ export default function AdminDashboard() {
   const [verificationTitle, setVerificationTitle] = useState("");
   const [verificationBody, setVerificationBody] =
     useState<React.ReactNode>(null);
+  const [satLatLon, setSatLatLon] = useState("");
+  const [iotText, setIotText] = useState("");
 
   if (!isAuthenticated || user?.type !== "admin") {
     return <Navigate to="/" replace />;
@@ -302,6 +304,51 @@ export default function AdminDashboard() {
   };
 
   const stats = calculateStats();
+
+  const analyzeSatellite = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const [latStr, lonStr] = satLatLon.split(",");
+      const lat = parseFloat(latStr);
+      const lon = parseFloat(lonStr);
+      const res = await fetch("/api/satellite/ndvi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ lat, lon }),
+      });
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data?.message || `Failed with ${res.status}`);
+      toast.success("Satellite request submitted");
+      console.log("NDVI response", data);
+    } catch (e: any) {
+      toast.error(e.message || "Satellite analysis failed");
+    }
+  };
+
+  const validateIot = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const payload = JSON.parse(iotText || "{}");
+      const res = await fetch("/api/iot/ingest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data?.message || `Failed with ${res.status}`);
+      toast.success("IoT payload stored");
+    } catch (e: any) {
+      toast.error(e.message || "Invalid IoT JSON");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4">
@@ -736,17 +783,15 @@ export default function AdminDashboard() {
                         setVerificationTitle("Satellite Data Analysis");
                         setVerificationBody(
                           <div className="space-y-3 text-sm">
-                            <p>
-                              Upload a GeoJSON/KML boundary or paste a location
-                              to fetch NDVI.
-                            </p>
-                            <input
-                              type="file"
-                              accept=".geojson,.kml"
-                              className="block w-full text-sm"
+                            <p>Paste a location to fetch NDVI (lat,lon)</p>
+                            <Input
+                              placeholder="Latitude,Longitude"
+                              value={satLatLon}
+                              onChange={(e) => setSatLatLon(e.target.value)}
                             />
-                            <Input placeholder="Latitude,Longitude" />
-                            <Button className="mt-2">Analyze</Button>
+                            <Button className="mt-2" onClick={analyzeSatellite}>
+                              Analyze
+                            </Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);
@@ -792,10 +837,14 @@ export default function AdminDashboard() {
                               Paste IoT payload (JSON) for quick validation.
                             </p>
                             <Textarea
-                              placeholder='{"soilMoisture": 23.4, "ph": 6.8}'
+                              placeholder='{"sensorId":"S-01","metrics":{"soilMoisture":23.4,"ph":6.8}}'
                               rows={6}
+                              value={iotText}
+                              onChange={(e) => setIotText(e.target.value)}
                             />
-                            <Button className="mt-2">Validate</Button>
+                            <Button className="mt-2" onClick={validateIot}>
+                              Validate
+                            </Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);
