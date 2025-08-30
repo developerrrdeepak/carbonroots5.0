@@ -80,6 +80,7 @@ const mockProjects = [
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [farmers, setFarmers] = useState(mockFarmers);
+  const [loadingFarmers, setLoadingFarmers] = useState(false);
   const [projects, setProjects] = useState(mockProjects);
   const [selectedFarmer, setSelectedFarmer] = useState<any>(null);
   const [newProject, setNewProject] = useState({
