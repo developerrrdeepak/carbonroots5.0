@@ -331,7 +331,7 @@ export default function AdminDashboard() {
                     {!loadingFarmers && farmers.map((farmer) => (
                       <TableRow key={farmer.id}>
                         <TableCell className="font-medium">
-                          {farmer.name}
+                          {farmer.name || farmer.email}
                         </TableCell>
                         <TableCell>{farmer.email}</TableCell>
                         <TableCell>{
