@@ -754,6 +754,11 @@ export const socialCallback: RequestHandler = async (req, res) => {
   }
 };
 
+export const googleCallback: RequestHandler = async (req, res) => {
+  (req as any).params = { provider: "google" };
+  return socialCallback(req, res);
+};
+
 // Update farmer status (admin only)
 export const updateFarmerStatus: RequestHandler = async (req, res) => {
   try {
