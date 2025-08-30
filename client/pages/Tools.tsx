@@ -830,6 +830,9 @@ export default function Tools() {
                   </div>
                 </CardContent>
               </Card>
+
+              <PhotoUploadAnalyzer />
+              <LiveWeather />
             </div>
           </TabsContent>
         </Tabs>
