@@ -95,6 +95,17 @@ class Database {
     return this.getDb().collection("passwords");
   }
 
+  getIotReadingsCollection(): Collection<{
+    farmerId?: string;
+    sensorId: string;
+    timestamp: Date;
+    metrics: Record<string, number>;
+    raw?: any;
+    createdAt: Date;
+  }> {
+    return this.getDb().collection("iot_readings");
+  }
+
   private async createIndexes(): Promise<void> {
     try {
       // Farmers collection indexes
@@ -134,6 +145,11 @@ class Database {
         { userId: 1, userType: 1 },
         { unique: true },
       );
+
+      // IoT readings indexes
+      await this.getIotReadingsCollection().createIndex({ sensorId: 1 });
+      await this.getIotReadingsCollection().createIndex({ farmerId: 1 });
+      await this.getIotReadingsCollection().createIndex({ timestamp: -1 });
 
       console.log("📊 Database indexes created successfully");
     } catch (error) {
