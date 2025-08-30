@@ -16,6 +16,8 @@ import {
   farmerPasswordLogin,
   socialAuth,
   socialCallback,
+  googleAuth,
+  googleCallback,
 } from "./routes/auth";
 
 import {
