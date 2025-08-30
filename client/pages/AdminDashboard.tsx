@@ -928,6 +928,18 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="settings">
+            <Card className="bg-white/90 border border-emerald-100 shadow-sm">
+              <CardHeader>
+                <CardTitle>Public Site Settings</CardTitle>
+                <CardDescription>Edit homepage counters and sensor count.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PublicStatsEditor />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
 
         {/* Farmer Details Modal */}
