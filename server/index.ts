@@ -69,8 +69,8 @@ export function createServer() {
   app.post("/api/auth/logout", logout);
 
   // Social Authentication routes (explicit Google endpoints)
-  app.post("/api/auth/social/google", (await import("./routes/auth")).googleAuth);
-  app.get("/api/auth/social/google/callback", (await import("./routes/auth")).googleCallback);
+  app.post("/api/auth/social/google", googleAuth);
+  app.get("/api/auth/social/google/callback", googleCallback);
 
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
