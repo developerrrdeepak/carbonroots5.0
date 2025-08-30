@@ -381,11 +381,12 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="farmers" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="farmers">Farmer Management</TabsTrigger>
             <TabsTrigger value="projects">Project Management</TabsTrigger>
             <TabsTrigger value="mrv">MRV Tools</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="farmers">
