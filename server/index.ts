@@ -75,7 +75,10 @@ export function createServer() {
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
   app.put("/api/admin/farmer-status", updateFarmerStatus);
-  app.post("/api/admin/farmers", (await import("./routes/auth")).adminAddFarmer);
+  app.post(
+    "/api/admin/farmers",
+    (await import("./routes/auth")).adminAddFarmer,
+  );
 
   // Carbon prediction routes (protected)
   app.post("/api/carbon/predict", predictCarbon);
@@ -176,7 +179,9 @@ if (process.env.NODE_ENV === "production") {
     g.__serverSignalHandlersSet = true;
 
     process.on("SIGTERM", async () => {
-      console.log("🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...");
+      console.log(
+        "🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...",
+      );
       try {
         const Database = await import("./lib/database");
         await Database.default.getInstance().disconnect();

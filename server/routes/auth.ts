@@ -811,28 +811,46 @@ export const adminAddFarmer: RequestHandler = async (req, res) => {
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({ success: false, message: "No token provided" });
+      return res
+        .status(401)
+        .json({ success: false, message: "No token provided" });
     }
 
     const user = await authService.getUserByToken(token);
     if (!user || user.type !== "admin") {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
-    const { email, registrationData } = req.body as { email: string; registrationData?: Partial<EnhancedFarmerRegistration> };
+    const { email, registrationData } = req.body as {
+      email: string;
+      registrationData?: Partial<EnhancedFarmerRegistration>;
+    };
     if (!email) {
-      return res.status(400).json({ success: false, message: "Email is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
     }
 
     const existing = await authService.findFarmerByEmail(email);
     if (existing) {
-      return res.status(400).json({ success: false, message: "Farmer already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Farmer already exists" });
     }
 
-    const farmer = await authService.createFarmer(email, registrationData as any);
+    const farmer = await authService.createFarmer(
+      email,
+      registrationData as any,
+    );
 
     try {
-      await emailService.sendWelcomeEmail(email, farmer.name || "Farmer", farmer.estimatedIncome || 0);
+      await emailService.sendWelcomeEmail(
+        email,
+        farmer.name || "Farmer",
+        farmer.estimatedIncome || 0,
+      );
     } catch (e) {
       console.error("⚠️ [WELCOME EMAIL] Failed to send welcome email:", e);
     }
