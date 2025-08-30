@@ -180,13 +180,15 @@ export default function AdminDashboard() {
     toast.success(`${type} report exported successfully!`);
   };
 
+  const getStatus = (f: any) => (f.status ? f.status : f.verified ? "verified" : "pending");
+  const getCredits = (f: any) => (typeof f.carbonCredits === "number" ? f.carbonCredits : 0);
+  const getLand = (f: any) => (typeof f.landSize === "number" ? f.landSize : 0);
+
   const calculateStats = () => {
     const totalFarmers = farmers.length;
-    const verifiedFarmers = farmers.filter(
-      (f) => f.status === "verified",
-    ).length;
-    const totalCredits = farmers.reduce((sum, f) => sum + f.carbonCredits, 0);
-    const totalLand = farmers.reduce((sum, f) => sum + f.landSize, 0);
+    const verifiedFarmers = farmers.filter((f) => getStatus(f) === "verified").length;
+    const totalCredits = farmers.reduce((sum, f) => sum + getCredits(f), 0);
+    const totalLand = farmers.reduce((sum, f) => sum + getLand(f), 0);
 
     return { totalFarmers, verifiedFarmers, totalCredits, totalLand };
   };
