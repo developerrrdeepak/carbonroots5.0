@@ -316,7 +316,17 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {farmers.map((farmer) => (
+                    {loadingFarmers && (
+                      <TableRow>
+                        <TableCell colSpan={7}>Loading farmers...</TableCell>
+                      </TableRow>
+                    )}
+                    {!loadingFarmers && farmers.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7}>No farmers found</TableCell>
+                      </TableRow>
+                    )}
+                    {!loadingFarmers && farmers.map((farmer) => (
                       <TableRow key={farmer.id}>
                         <TableCell className="font-medium">
                           {farmer.name}
