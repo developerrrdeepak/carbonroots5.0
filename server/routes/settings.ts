@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import Database from "../lib/database";
 import AuthService from "../lib/services";
-import { defaultPublicStats, PublicStats } from "@shared/site";
+import { defaultPublicStats, PublicStats } from "../../shared/site";
 
 const db = Database.getInstance();
 const auth = new AuthService();
