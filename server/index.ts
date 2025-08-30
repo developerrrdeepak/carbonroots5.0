@@ -59,7 +59,7 @@ export function createServer() {
   });
 
   app.get("/api/health", healthCheck);
-  app.get("/api/public/stats", (await import("./routes/settings")).getPublicStats);
+  app.get("/api/public/stats", getPublicStats);
 
   // Authentication routes
   app.post("/api/auth/send-otp", sendOTP);
@@ -78,7 +78,7 @@ export function createServer() {
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
   app.put("/api/admin/farmer-status", updateFarmerStatus);
-  app.put("/api/admin/stats", (await import("./routes/settings")).updatePublicStats);
+  app.put("/api/admin/stats", updatePublicStats);
 
   // Carbon prediction routes (protected)
   app.post("/api/carbon/predict", predictCarbon);
