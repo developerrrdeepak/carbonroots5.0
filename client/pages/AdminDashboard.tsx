@@ -835,10 +835,12 @@ export default function AdminDashboard() {
                               Paste IoT payload (JSON) for quick validation.
                             </p>
                             <Textarea
-                              placeholder='{"soilMoisture": 23.4, "ph": 6.8}'
+                              placeholder='{"sensorId":"S-01","soilMoisture":23.4,"ph":6.8}'
                               rows={6}
+                              value={iotText}
+                              onChange={(e) => setIotText(e.target.value)}
                             />
-                            <Button className="mt-2">Validate</Button>
+                            <Button className="mt-2" onClick={validateIot}>Validate</Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);
