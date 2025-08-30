@@ -25,7 +25,7 @@ import {
   getModelInfo,
   getFarmerCarbonHistory,
   batchPredictCarbon,
-  getCarbonStatistics
+  getCarbonStatistics,
 } from "./routes/carbon";
 
 export function createServer() {

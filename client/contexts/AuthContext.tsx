@@ -75,7 +75,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
             localStorage.setItem("auth_token", urlToken);
             url.searchParams.delete("token");
             url.searchParams.delete("auth_success");
-            window.history.replaceState({}, "", url.pathname + (url.search ? `?${url.searchParams.toString()}` : "") + url.hash);
+            window.history.replaceState(
+              {},
+              "",
+              url.pathname +
+                (url.search ? `?${url.searchParams.toString()}` : "") +
+                url.hash,
+            );
           }
         }
 
