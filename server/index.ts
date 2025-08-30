@@ -66,9 +66,9 @@ export function createServer() {
   app.put("/api/auth/update-profile", updateProfile);
   app.post("/api/auth/logout", logout);
 
-  // Social Authentication routes (temporarily disabled due to path-to-regexp issue)
-  // app.post("/api/auth/social/:provider", socialAuth);
-  // app.get("/api/auth/social/:provider/callback", socialCallback);
+  // Social Authentication routes (explicit Google endpoints)
+  app.post("/api/auth/social/google", (await import("./routes/auth")).googleAuth);
+  app.get("/api/auth/social/google/callback", (await import("./routes/auth")).googleCallback);
 
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
