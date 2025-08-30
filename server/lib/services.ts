@@ -168,7 +168,7 @@ class AuthService {
 
     const farmerData: DatabaseFarmer = {
       email,
-      verified: false,
+      verified: true,
       createdAt: new Date(),
       updatedAt: new Date(),
       estimatedIncome,
