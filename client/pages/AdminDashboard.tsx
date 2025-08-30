@@ -835,7 +835,7 @@ export default function AdminDashboard() {
                               Paste IoT payload (JSON) for quick validation.
                             </p>
                             <Textarea
-                              placeholder='{"sensorId":"S-01","soilMoisture":23.4,"ph":6.8}'
+                              placeholder='{"sensorId":"S-01","metrics":{"soilMoisture":23.4,"ph":6.8}}'
                               rows={6}
                               value={iotText}
                               onChange={(e) => setIotText(e.target.value)}
