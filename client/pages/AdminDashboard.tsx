@@ -96,6 +96,8 @@ export default function AdminDashboard() {
   const [verificationTitle, setVerificationTitle] = useState("");
   const [verificationBody, setVerificationBody] =
     useState<React.ReactNode>(null);
+  const [satLatLon, setSatLatLon] = useState("");
+  const [iotText, setIotText] = useState("");
 
   if (!isAuthenticated || user?.type !== "admin") {
     return <Navigate to="/" replace />;
