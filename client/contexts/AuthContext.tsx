@@ -67,6 +67,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Capture OAuth token from URL (e.g., callback redirect)
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          const urlToken = url.searchParams.get("token");
+          if (urlToken) {
+            localStorage.setItem("auth_token", urlToken);
+            url.searchParams.delete("token");
+            url.searchParams.delete("auth_success");
+            window.history.replaceState({}, "", url.pathname + (url.search ? `?${url.searchParams.toString()}` : "") + url.hash);
+          }
+        }
+
         const token = localStorage.getItem("auth_token");
         if (token) {
           const response = await fetch("/api/auth/verify", {
