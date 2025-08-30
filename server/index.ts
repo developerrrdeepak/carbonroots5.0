@@ -134,6 +134,7 @@ export function createServer() {
       availableEndpoints: [
         "GET /api/ping",
         "GET /api/health",
+        "GET /api/public/stats",
         "POST /api/auth/send-otp",
         "POST /api/auth/verify-otp",
         "POST /api/auth/admin-login",
@@ -146,6 +147,7 @@ export function createServer() {
         "GET /api/auth/social/:provider/callback",
         "GET /api/admin/farmers",
         "PUT /api/admin/farmer-status",
+        "PUT /api/admin/stats",
         "POST /api/carbon/predict",
         "GET /api/carbon/model-info",
         "GET /api/carbon/history",
