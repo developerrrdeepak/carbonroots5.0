@@ -316,6 +316,43 @@ export default function AdminDashboard() {
 
   const stats = calculateStats();
 
+  const submitAddFarmer = async () => {
+    try {
+      if (!addFarmer.email) return toast.error("Email is required");
+      const token = localStorage.getItem("auth_token");
+      const registrationData: any = {
+        name: addFarmer.name,
+        phone: addFarmer.phone,
+        landSize: addFarmer.landSize ? Number(addFarmer.landSize) : 0,
+        landUnit: addFarmer.landUnit,
+        farmingType: "conventional",
+        primaryCrops: [],
+        irrigationType: "rain_fed",
+        address: "",
+        pincode: addFarmer.pincode,
+        state: addFarmer.state,
+        interestedProjects: [],
+        sustainablePractices: [],
+      };
+      const res = await fetch("/api/admin/farmers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ email: addFarmer.email, registrationData }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || `Failed with ${res.status}`);
+      setFarmers((prev: any[]) => [data.farmer, ...prev]);
+      setShowAddFarmer(false);
+      setAddFarmer({ email: "", name: "", phone: "", landSize: "", landUnit: "acres", state: "", pincode: "" });
+      toast.success("Farmer added");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to add farmer");
+    }
+  };
+
   const analyzeSatellite = async () => {
     try {
       const token = localStorage.getItem("auth_token");
