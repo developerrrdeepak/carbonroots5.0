@@ -448,7 +448,16 @@ export const farmerPasswordRegister: RequestHandler = async (req, res) => {
         `⚠️ [WELCOME EMAIL] Failed to send welcome email to ${email}:`,
         emailError,
       );
-      // Don't fail the registration if email fails
+    }
+
+    // Notify admin about new registration
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        await emailService.sendAdminNewFarmerEmail(adminEmail, farmer as any);
+      }
+    } catch (notifyError) {
+      console.error("⚠️ [ADMIN NOTIFY] Failed to notify admin:", notifyError);
     }
 
     const response: LoginResponse = {
