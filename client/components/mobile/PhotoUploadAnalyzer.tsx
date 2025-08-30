@@ -179,15 +179,11 @@ export default function PhotoUploadAnalyzer() {
           {previewUrl && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   ref={imgRef}
                   src={previewUrl}
                   alt="Preview"
                   className="w-full h-auto rounded-lg border"
-                  onLoad={() => {
-                    // image is ready for analysis
-                  }}
                 />
               </div>
               <div className="space-y-3">
