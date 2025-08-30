@@ -150,6 +150,7 @@ export function createServer() {
         "GET /api/auth/social/:provider/callback",
         "GET /api/admin/farmers",
         "PUT /api/admin/farmer-status",
+        "POST /api/admin/farmers",
         "POST /api/carbon/predict",
         "GET /api/carbon/model-info",
         "GET /api/carbon/history",
