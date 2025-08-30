@@ -95,6 +95,10 @@ class Database {
     return this.getDb().collection("passwords");
   }
 
+  getSettingsCollection(): Collection<{ key: string; value: any; updatedAt: Date }> {
+    return this.getDb().collection("settings");
+  }
+
   private async createIndexes(): Promise<void> {
     try {
       // Farmers collection indexes
