@@ -21,6 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import PhotoUploadAnalyzer from "@/components/mobile/PhotoUploadAnalyzer";
+import LiveWeather from "@/components/mobile/LiveWeather";
 import {
   Satellite,
   Camera,
