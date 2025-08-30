@@ -167,27 +167,34 @@ export function createServer() {
   return app;
 }
 
-// Handle graceful shutdown
-process.on("SIGTERM", async () => {
-  console.log("🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...");
-  try {
-    const Database = await import("./lib/database");
-    await Database.default.getInstance().disconnect();
-    console.log("✅ [SHUTDOWN] Database disconnected successfully");
-  } catch (error) {
-    console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
-  }
-  process.exit(0);
-});
+// Handle graceful shutdown only in production and register once
+if (process.env.NODE_ENV === "production") {
+  const g = globalThis as any;
+  if (!g.__serverSignalHandlersSet) {
+    g.__serverSignalHandlersSet = true;
 
-process.on("SIGINT", async () => {
-  console.log("🛑 [SHUTDOWN] SIGINT received, shutting down gracefully...");
-  try {
-    const Database = await import("./lib/database");
-    await Database.default.getInstance().disconnect();
-    console.log("✅ [SHUTDOWN] Database disconnected successfully");
-  } catch (error) {
-    console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
+    process.on("SIGTERM", async () => {
+      console.log("🛑 [SHUTDOWN] SIGTERM received, shutting down gracefully...");
+      try {
+        const Database = await import("./lib/database");
+        await Database.default.getInstance().disconnect();
+        console.log("✅ [SHUTDOWN] Database disconnected successfully");
+      } catch (error) {
+        console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
+      }
+      process.exit(0);
+    });
+
+    process.on("SIGINT", async () => {
+      console.log("🛑 [SHUTDOWN] SIGINT received, shutting down gracefully...");
+      try {
+        const Database = await import("./lib/database");
+        await Database.default.getInstance().disconnect();
+        console.log("✅ [SHUTDOWN] Database disconnected successfully");
+      } catch (error) {
+        console.error("❌ [SHUTDOWN] Error during database disconnect:", error);
+      }
+      process.exit(0);
+    });
   }
-  process.exit(0);
-});
+}
