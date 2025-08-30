@@ -467,6 +467,57 @@ export default function AdminDashboard() {
                       <Download className="h-4 w-4 mr-2" />
                       Export
                     </Button>
+                    <Dialog open={showAddFarmer} onOpenChange={setShowAddFarmer}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-green-600 hover:bg-green-700" size="sm">
+                          <Plus className="h-4 w-4 mr-2" /> Add Farmer
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add Farmer</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div>
+                            <Label>Email *</Label>
+                            <Input value={addFarmer.email} onChange={(e) => setAddFarmer({ ...addFarmer, email: e.target.value })} placeholder="farmer@example.com" />
+                          </div>
+                          <div>
+                            <Label>Name</Label>
+                            <Input value={addFarmer.name} onChange={(e) => setAddFarmer({ ...addFarmer, name: e.target.value })} placeholder="Farmer Name" />
+                          </div>
+                          <div>
+                            <Label>Phone</Label>
+                            <Input value={addFarmer.phone} onChange={(e) => setAddFarmer({ ...addFarmer, phone: e.target.value })} placeholder="Phone" />
+                          </div>
+                          <div>
+                            <Label>Land Size</Label>
+                            <Input type="number" value={addFarmer.landSize} onChange={(e) => setAddFarmer({ ...addFarmer, landSize: e.target.value })} placeholder="0" />
+                          </div>
+                          <div>
+                            <Label>Land Unit</Label>
+                            <Select value={addFarmer.landUnit} onValueChange={(v) => setAddFarmer({ ...addFarmer, landUnit: v })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select unit" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="acres">Acres</SelectItem>
+                                <SelectItem value="hectares">Hectares</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>State</Label>
+                            <Input value={addFarmer.state} onChange={(e) => setAddFarmer({ ...addFarmer, state: e.target.value })} placeholder="State" />
+                          </div>
+                          <div>
+                            <Label>Pincode</Label>
+                            <Input value={addFarmer.pincode} onChange={(e) => setAddFarmer({ ...addFarmer, pincode: e.target.value })} placeholder="Pincode" />
+                          </div>
+                        </div>
+                        <Button className="w-full mt-3" onClick={submitAddFarmer}>Save</Button>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardTitle>
               </CardHeader>
