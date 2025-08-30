@@ -57,6 +57,7 @@ export function createServer() {
   });
 
   app.get("/api/health", healthCheck);
+  app.get("/api/public/stats", (await import("./routes/settings")).getPublicStats);
 
   // Authentication routes
   app.post("/api/auth/send-otp", sendOTP);
