@@ -804,3 +804,42 @@ export const updateFarmerStatus: RequestHandler = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// Admin: create a farmer directly
+export const adminAddFarmer: RequestHandler = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token provided" });
+    }
+
+    const user = await authService.getUserByToken(token);
+    if (!user || user.type !== "admin") {
+      return res.status(403).json({ success: false, message: "Admin access required" });
+    }
+
+    const { email, registrationData } = req.body as { email: string; registrationData?: Partial<EnhancedFarmerRegistration> };
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const existing = await authService.findFarmerByEmail(email);
+    if (existing) {
+      return res.status(400).json({ success: false, message: "Farmer already exists" });
+    }
+
+    const farmer = await authService.createFarmer(email, registrationData as any);
+
+    try {
+      await emailService.sendWelcomeEmail(email, farmer.name || "Farmer", farmer.estimatedIncome || 0);
+    } catch (e) {
+      console.error("⚠️ [WELCOME EMAIL] Failed to send welcome email:", e);
+    }
+
+    res.json({ success: true, farmer });
+  } catch (error) {
+    console.error("❌ [ADMIN ADD FARMER] Error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
