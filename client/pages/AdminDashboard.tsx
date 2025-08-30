@@ -54,41 +54,7 @@ import {
 } from "lucide-react";
 
 // Mock data - in real app this would come from API
-const mockFarmers = [
-  {
-    id: "1",
-    name: "Rajesh Kumar",
-    email: "rajesh@example.com",
-    phone: "+91 98765 43210",
-    location: "Punjab",
-    landSize: 5.2,
-    status: "verified",
-    carbonCredits: 12.5,
-    joinedDate: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Priya Sharma",
-    email: "priya@example.com",
-    phone: "+91 87654 32109",
-    location: "Haryana",
-    landSize: 3.8,
-    status: "pending",
-    carbonCredits: 0,
-    joinedDate: "2024-02-20",
-  },
-  {
-    id: "3",
-    name: "Amit Singh",
-    email: "amit@example.com",
-    phone: "+91 76543 21098",
-    location: "Uttar Pradesh",
-    landSize: 7.1,
-    status: "verified",
-    carbonCredits: 18.7,
-    joinedDate: "2024-01-08",
-  },
-];
+const mockFarmers: any[] = [];
 
 const mockProjects = [
   {
