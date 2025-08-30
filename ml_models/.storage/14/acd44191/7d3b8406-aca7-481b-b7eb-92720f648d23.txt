@@ -1,0 +1,57 @@
+$ pip uninstall -y pandas numpy scikit-learn matplotlib seaborn
+Found existing installation: pandas 2.3.2
+Uninstalling pandas-2.3.2:
+  Successfully uninstalled pandas-2.3.2
+Found existing installation: numpy 2.2.6
+Uninstalling numpy-2.2.6:
+  Successfully uninstalled numpy-2.2.6
+Found existing installation: scikit-learn 1.7.1
+Uninstalling scikit-learn-1.7.1:
+  Successfully uninstalled scikit-learn-1.7.1
+Found existing installation: matplotlib 3.10.5
+Uninstalling matplotlib-3.10.5:
+  Successfully uninstalled matplotlib-3.10.5
+Found existing installation: seaborn 0.13.2
+Uninstalling seaborn-0.13.2:
+  Successfully uninstalled seaborn-0.13.2
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m$ pip install pandas==1.5.3 numpy==1.24.3 scikit-learn matplotlib seaborn joblib
+
+Collecting pandas==1.5.3
+  Downloading pandas-1.5.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.1 MB)
+[?25l     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/12.1 MB[0m [31m?[0m eta [36m-:--:--[0m[2K     [91m━━━━━━━━[0m[90m╺[0m[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m2.4/12.1 MB[0m [31m73.4 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m4.8/12.1 MB[0m [31m69.8 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[90m╺[0m [32m11.9/12.1 MB[0m [31m129.6 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m12.1/12.1 MB[0m [31m127.6 MB/s[0m eta [36m0:00:01[0m[2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m12.1/12.1 MB[0m [31m85.1 MB/s[0m eta [36m0:00:00[0m
+[?25hCollecting numpy==1.24.3
+  Downloading numpy-1.24.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.3 MB)
+[?25l     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/17.3 MB[0m [31m?[0m eta [36m-:--:--[0m[2K     [91m━━━━━━━━━━━━━━━━━[0m[90m╺[0m[90m━━━━━━━━━━━━━━━━━━━━━━[0m [32m7.5/17.3 MB[0m [31m226.6 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━━━━[0m [32m15.0/17.3 MB[0m [31m214.3 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m17.3/17.3 MB[0m [31m202.3 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m17.3/17.3 MB[0m [31m202.3 MB/s[0m eta [36m0:00:01[0m[2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m17.3/17.3 MB[0m [31m77.0 MB/s[0m eta [36m0:00:00[0m
+[?25hCollecting scikit-learn
+  Using cached scikit_learn-1.7.1-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.7 MB)
+Collecting matplotlib
+  Using cached matplotlib-3.10.5-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (8.7 MB)
+Collecting seaborn
+  Downloading seaborn-0.13.2-py3-none-any.whl (294 kB)
+[?25l     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/294.9 kB[0m [31m?[0m eta [36m-:--:--[0m[2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m294.9/294.9 kB[0m [31m9.7 MB/s[0m eta [36m0:00:00[0m
+[?25hRequirement already satisfied: joblib in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (1.5.1)
+Requirement already satisfied: pytz>=2020.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from pandas==1.5.3) (2025.2)
+Requirement already satisfied: python-dateutil>=2.8.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from pandas==1.5.3) (2.9.0.post0)
+Requirement already satisfied: scipy>=1.8.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from scikit-learn) (1.15.3)
+Requirement already satisfied: threadpoolctl>=3.1.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from scikit-learn) (3.6.0)
+Requirement already satisfied: fonttools>=4.22.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (4.58.4)
+Requirement already satisfied: kiwisolver>=1.3.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (1.4.8)
+Requirement already satisfied: pyparsing>=2.3.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (3.2.3)
+Requirement already satisfied: packaging>=20.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (23.0)
+Requirement already satisfied: cycler>=0.10 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: pillow>=8 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (11.2.1)
+Requirement already satisfied: contourpy>=1.0.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib) (1.3.2)
+Requirement already satisfied: six>=1.5 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from python-dateutil>=2.8.1->pandas==1.5.3) (1.16.0)
+Installing collected packages: numpy, pandas, scikit-learn, matplotlib, seaborn
+[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tensorflow 2.18.0 requires numpy<2.1.0,>=1.26.0, but you have numpy 1.24.3 which is incompatible.
+paddlepaddle 2.4.2 requires protobuf<=3.20.0,>=3.1.0, but you have protobuf 5.29.5 which is incompatible.
+onnx 1.12.0 requires protobuf<=3.20.1,>=3.12.2, but you have protobuf 5.29.5 which is incompatible.
+albumentations 1.4.24 requires numpy>=1.24.4, but you have numpy 1.24.3 which is incompatible.
+albucore 0.0.23 requires numpy>=1.24.4, but you have numpy 1.24.3 which is incompatible.[0m[31m
+[0mSuccessfully installed matplotlib numpy pandas scikit-learn seaborn
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m25.0.1[0m[39;49m -> [0m[32;49m25.2[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m

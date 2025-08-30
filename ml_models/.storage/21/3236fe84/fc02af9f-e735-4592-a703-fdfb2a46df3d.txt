@@ -1,0 +1,7 @@
+$ pip install numpy scipy
+Requirement already satisfied: numpy in /data/.cache/python/lib/python3.10/site-packages (1.24.3)
+Requirement already satisfied: scipy in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (1.15.3)
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m25.0.1[0m[39;49m -> [0m[32;49m25.2[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m

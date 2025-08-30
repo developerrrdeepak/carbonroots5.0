@@ -1,0 +1,6 @@
+$ cd /workspace && python carbon_model_training.py
+=== CARBON STOCK ESTIMATION MODEL TRAINING ===
+
+Loading preprocessed data...
+✓ Preprocessed data loaded successfully
+Error loading data: No module named 'numpy._core'

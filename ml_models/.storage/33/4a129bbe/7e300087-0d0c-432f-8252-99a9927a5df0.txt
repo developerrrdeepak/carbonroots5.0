@@ -1,0 +1,18 @@
+$ cd /workspace && python carbon_model_training.py
+=== CARBON STOCK ESTIMATION MODEL TRAINING ===
+
+Loading preprocessed data...
+✓ Preprocessed data loaded successfully
+Error loading data: No module named 'numpy._core'
+$ pip install numpy && cd /workspace && python carbon_model_training.py
+
+Requirement already satisfied: numpy in /data/.cache/python/lib/python3.10/site-packages (1.24.3)
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 25.0.1 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+=== CARBON STOCK ESTIMATION MODEL TRAINING ===
+
+Loading preprocessed data...
+✓ Preprocessed data loaded successfully
+Error loading data: No module named 'numpy._core'

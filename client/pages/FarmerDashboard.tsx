@@ -38,7 +38,10 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
+import { predictCarbon, validateCarbonInput } from "../api/carbon";
+import { CarbonPredictionInput, CarbonPredictionResponse } from "../../shared/carbon";
 
 export default function FarmerDashboard() {
   const { user, isAuthenticated, updateProfile } = useAuth();
@@ -61,6 +64,9 @@ export default function FarmerDashboard() {
   });
   const [loading, setLoading] = useState(false);
   const [profileComplete, setProfileComplete] = useState(false);
+  const [carbonPrediction, setCarbonPrediction] = useState<CarbonPredictionResponse | null>(null);
+  const [carbonLoading, setCarbonLoading] = useState(false);
+  const [carbonError, setCarbonError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.farmer) {
@@ -117,15 +123,43 @@ export default function FarmerDashboard() {
   const handleFarmDataSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setCarbonLoading(true);
+    setCarbonError(null);
 
     try {
+      // Create carbon prediction input from farm data
+      const carbonInput: CarbonPredictionInput = {
+        ndvi: 0.6, // Default value, could be calculated from farm data
+        canopyCoverPercent: parseFloat(farmData.areaPlanted) || 0,
+        soilCarbonPercent: 2.5, // Default value
+        areaHectares: parseFloat(profile.landSize) || 0,
+        projectDurationYears: 5, // Default project duration
+      };
+
+      // Validate input
+      const validationErrors = validateCarbonInput(carbonInput);
+      if (validationErrors.length > 0) {
+        toast.error(validationErrors[0]);
+        setLoading(false);
+        setCarbonLoading(false);
+        return;
+      }
+
+      // Make API call to predict carbon
+      const prediction = await predictCarbon(carbonInput);
+      setCarbonPrediction(prediction);
+
+      toast.success("Carbon prediction calculated successfully!");
       // Here you would typically save farm data to your backend
       toast.success("Farm data submitted successfully!");
     } catch (error) {
-      toast.error("Failed to submit farm data");
+      console.error("Carbon prediction error:", error);
+      setCarbonError(error instanceof Error ? error.message : "Failed to calculate carbon prediction");
+      toast.error("Failed to calculate carbon prediction");
+    } finally {
+      setLoading(false);
+      setCarbonLoading(false);
     }
-
-    setLoading(false);
   };
 
   const calculateCarbonCredits = () => {
@@ -504,26 +538,76 @@ export default function FarmerDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Verification Progress</span>
-                      <span className="text-sm text-gray-600">60%</span>
-                    </div>
-                    <Progress value={60} className="h-2" />
+                    {carbonLoading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+                        <span className="ml-2">Calculating carbon credits...</span>
+                      </div>
+                    ) : carbonError ? (
+                      <div className="text-center py-4 text-red-600">
+                        <AlertCircle className="h-6 w-6 mx-auto mb-2" />
+                        <p>{carbonError}</p>
+                      </div>
+                    ) : carbonPrediction ? (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">Carbon Sequestration:</span>
+                          <span className="font-bold text-green-600">
+                            {carbonPrediction.prediction.carbonSequestration.toFixed(1)} tCO₂e/ha
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">Confidence:</span>
+                          <span className="font-medium">
+                            {(carbonPrediction.prediction.confidence * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        {carbonPrediction.credits && (
+                          <>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm">Estimated Credits:</span>
+                              <span className="font-bold text-green-600">
+                                {carbonPrediction.credits.totalCredits.toFixed(1)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm">Estimated Value:</span>
+                              <span className="font-bold text-green-600 flex items-center">
+                                <IndianRupee className="h-4 w-4 mr-1" />
+                                {(carbonPrediction.credits.totalCredits * 500).toLocaleString("en-IN")}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                        <Separator />
+                        <div className="text-xs text-gray-500">
+                          Based on your farm data and carbon prediction model
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">Verification Progress</span>
+                          <span className="text-sm text-gray-600">60%</span>
+                        </div>
+                        <Progress value={60} className="h-2" />
 
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm">Profile Verified</span>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="text-sm">Profile Verified</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="text-sm">Farm Data Submitted</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Clock className="h-4 w-4 text-yellow-600" />
+                            <span className="text-sm">Awaiting Verification</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm">Farm Data Submitted</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-yellow-600" />
-                        <span className="text-sm">Awaiting Verification</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -574,6 +658,9 @@ export default function FarmerDashboard() {
                               <Button
                                 size="sm"
                                 className="bg-green-600 hover:bg-green-700"
+                                onClick={() => {
+                                  toast.success(`Applied to ${project.name} successfully!`);
+                                }}
                               >
                                 Apply
                               </Button>

@@ -29,8 +29,17 @@ function expressPlugin(): Plugin {
   return {
     name: "express-plugin",
     apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
+    async configureServer(server) {
       const app = createServer();
+
+      // Initialize database for development
+      try {
+        const { initializeDatabase } = await import("./server/routes/auth");
+        await initializeDatabase();
+        console.log("✅ Database initialized successfully for development");
+      } catch (error) {
+        console.error("❌ Failed to initialize database:", error);
+      }
 
       // Add Express app as middleware to Vite dev server
       server.middlewares.use(app);

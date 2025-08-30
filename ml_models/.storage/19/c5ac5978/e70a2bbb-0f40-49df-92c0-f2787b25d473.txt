@@ -1,0 +1,32 @@
+$ pip uninstall -y matplotlib
+Found existing installation: matplotlib 3.10.5
+Uninstalling matplotlib-3.10.5:
+  Successfully uninstalled matplotlib-3.10.5
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m$ pip install matplotlib==3.7.2
+
+Collecting matplotlib==3.7.2
+  Downloading matplotlib-3.7.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.6 MB)
+[?25l     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/11.6 MB[0m [31m?[0m eta [36m-:--:--[0m[2K     [91m━━━━━━━━━━[0m[91m╸[0m[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m3.1/11.6 MB[0m [31m97.8 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[90m╺[0m[90m━━━━━━━━[0m [32m9.1/11.6 MB[0m [31m132.2 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m11.6/11.6 MB[0m [31m172.7 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m11.6/11.6 MB[0m [31m172.7 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m11.6/11.6 MB[0m [31m172.7 MB/s[0m eta [36m0:00:01[0m[2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m11.6/11.6 MB[0m [31m59.5 MB/s[0m eta [36m0:00:00[0m
+[?25hRequirement already satisfied: python-dateutil>=2.7 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (2.9.0.post0)
+Requirement already satisfied: numpy>=1.20 in /data/.cache/python/lib/python3.10/site-packages (from matplotlib==3.7.2) (1.24.3)
+Requirement already satisfied: pillow>=6.2.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (11.2.1)
+Collecting pyparsing<3.1,>=2.3.1
+  Downloading pyparsing-3.0.9-py3-none-any.whl (98 kB)
+[?25l     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/98.3 kB[0m [31m?[0m eta [36m-:--:--[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━[0m [32m92.2/98.3 kB[0m [31m215.7 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━[0m [32m92.2/98.3 kB[0m [31m215.7 MB/s[0m eta [36m0:00:01[0m[2K     [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━[0m [32m92.2/98.3 kB[0m [31m215.7 MB/s[0m eta [36m0:00:01[0m[2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m98.3/98.3 kB[0m [31m749.9 kB/s[0m eta [36m0:00:00[0m
+[?25hRequirement already satisfied: packaging>=20.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (23.0)
+Requirement already satisfied: contourpy>=1.0.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (1.3.2)
+Requirement already satisfied: cycler>=0.10 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (0.12.1)
+Requirement already satisfied: kiwisolver>=1.0.1 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (1.4.8)
+Requirement already satisfied: fonttools>=4.22.0 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from matplotlib==3.7.2) (4.58.4)
+Requirement already satisfied: six>=1.5 in /opt/conda/envs/mgx-chat/lib/python3.10/site-packages (from python-dateutil>=2.7->matplotlib==3.7.2) (1.16.0)
+Installing collected packages: pyparsing, matplotlib
+  Attempting uninstall: pyparsing
+    Found existing installation: pyparsing 3.2.3
+    Uninstalling pyparsing-3.2.3:
+      Successfully uninstalled pyparsing-3.2.3
+Successfully installed matplotlib-3.7.2 pyparsing-3.0.9
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m25.0.1[0m[39;49m -> [0m[32;49m25.2[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m

@@ -18,6 +18,14 @@ import {
   socialCallback,
 } from "./routes/auth";
 
+import {
+  predictCarbon,
+  getModelInfo,
+  getFarmerCarbonHistory,
+  batchPredictCarbon,
+  getCarbonStatistics
+} from "./routes/carbon";
+
 export function createServer() {
   const app = express();
 
@@ -65,6 +73,13 @@ export function createServer() {
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
   app.put("/api/admin/farmer-status", updateFarmerStatus);
+
+  // Carbon prediction routes (protected)
+  app.post("/api/carbon/predict", predictCarbon);
+  app.get("/api/carbon/model-info", getModelInfo);
+  app.get("/api/carbon/history", getFarmerCarbonHistory);
+  app.post("/api/carbon/batch-predict", batchPredictCarbon);
+  app.get("/api/carbon/statistics", getCarbonStatistics);
 
   // Test routes (development only)
   if (process.env.NODE_ENV !== "production") {
@@ -125,6 +140,11 @@ export function createServer() {
         "GET /api/auth/social/:provider/callback",
         "GET /api/admin/farmers",
         "PUT /api/admin/farmer-status",
+        "POST /api/carbon/predict",
+        "GET /api/carbon/model-info",
+        "GET /api/carbon/history",
+        "POST /api/carbon/batch-predict",
+        "GET /api/carbon/statistics",
         ...(process.env.NODE_ENV !== "production"
           ? ["POST /api/test/email", "GET /api/test/email-status"]
           : []),
