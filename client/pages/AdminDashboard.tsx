@@ -920,13 +920,13 @@ export default function AdminDashboard() {
                   <div>
                     <Label>Location</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.location}
+                      {typeof selectedFarmer.location === 'string' ? selectedFarmer.location : (selectedFarmer.location?.state || selectedFarmer.location?.pincode || '-')}
                     </p>
                   </div>
                   <div>
                     <Label>Land Size</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.landSize} hectares
+                      {getLand(selectedFarmer)} hectares
                     </p>
                   </div>
                   <div>
@@ -944,7 +944,7 @@ export default function AdminDashboard() {
                   <div>
                     <Label>Carbon Credits</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.carbonCredits}
+                      {getCredits(selectedFarmer)}
                     </p>
                   </div>
                 </div>
@@ -974,6 +974,15 @@ export default function AdminDashboard() {
             </DialogContent>
           </Dialog>
         )}
+
+        <Dialog open={showVerificationDialog} onOpenChange={setShowVerificationDialog}>
+          <DialogContent className="max-w-xl">
+            <DialogHeader>
+              <DialogTitle>{verificationTitle}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">{verificationBody}</div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
