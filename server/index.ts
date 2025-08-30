@@ -28,6 +28,8 @@ import {
   getCarbonStatistics,
 } from "./routes/carbon";
 
+import { getPublicStats, updatePublicStats } from "./routes/settings";
+
 export function createServer() {
   const app = express();
 
