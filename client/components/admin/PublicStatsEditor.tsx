@@ -56,7 +56,9 @@ export default function PublicStatsEditor() {
         <Input
           type="number"
           value={stats.activeSensors}
-          onChange={(e) => setStats({ ...stats, activeSensors: Number(e.target.value) })}
+          onChange={(e) =>
+            setStats({ ...stats, activeSensors: Number(e.target.value) })
+          }
         />
       </div>
       <div>
@@ -64,7 +66,9 @@ export default function PublicStatsEditor() {
         <Input
           type="number"
           value={stats.totalFarmers}
-          onChange={(e) => setStats({ ...stats, totalFarmers: Number(e.target.value) })}
+          onChange={(e) =>
+            setStats({ ...stats, totalFarmers: Number(e.target.value) })
+          }
         />
       </div>
       <div>
@@ -72,7 +76,9 @@ export default function PublicStatsEditor() {
         <Input
           type="number"
           value={stats.totalIncomeINR}
-          onChange={(e) => setStats({ ...stats, totalIncomeINR: Number(e.target.value) })}
+          onChange={(e) =>
+            setStats({ ...stats, totalIncomeINR: Number(e.target.value) })
+          }
         />
       </div>
       <div>
@@ -80,7 +86,9 @@ export default function PublicStatsEditor() {
         <Input
           type="number"
           value={stats.languagesSupported}
-          onChange={(e) => setStats({ ...stats, languagesSupported: Number(e.target.value) })}
+          onChange={(e) =>
+            setStats({ ...stats, languagesSupported: Number(e.target.value) })
+          }
         />
       </div>
       <div>

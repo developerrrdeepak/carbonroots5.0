@@ -7,7 +7,10 @@ export async function fetchPublicStats(): Promise<PublicStats> {
   return json.stats as PublicStats;
 }
 
-export async function savePublicStats(data: Partial<PublicStats>, token: string): Promise<PublicStats> {
+export async function savePublicStats(
+  data: Partial<PublicStats>,
+  token: string,
+): Promise<PublicStats> {
   const res = await fetch("/api/admin/stats", {
     method: "PUT",
     headers: {

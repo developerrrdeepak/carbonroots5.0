@@ -21,20 +21,39 @@ export const getPublicStats: RequestHandler = async (_req, res) => {
 export const updatePublicStats: RequestHandler = async (req, res) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
-    if (!token) return res.status(401).json({ success: false, message: "No token" });
+    if (!token)
+      return res.status(401).json({ success: false, message: "No token" });
     const user = await auth.getUserByToken(token);
     if (!user || user.type !== "admin")
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
 
     const incoming = req.body as Partial<PublicStats>;
     const next: PublicStats = {
       ...defaultPublicStats,
       ...incoming,
-      activeSensors: Math.max(0, Number(incoming.activeSensors ?? defaultPublicStats.activeSensors)),
-      totalFarmers: Math.max(0, Number(incoming.totalFarmers ?? defaultPublicStats.totalFarmers)),
-      totalIncomeINR: Math.max(0, Number(incoming.totalIncomeINR ?? defaultPublicStats.totalIncomeINR)),
-      languagesSupported: Math.max(1, Number(incoming.languagesSupported ?? defaultPublicStats.languagesSupported)),
-      supportLabel: String(incoming.supportLabel ?? defaultPublicStats.supportLabel),
+      activeSensors: Math.max(
+        0,
+        Number(incoming.activeSensors ?? defaultPublicStats.activeSensors),
+      ),
+      totalFarmers: Math.max(
+        0,
+        Number(incoming.totalFarmers ?? defaultPublicStats.totalFarmers),
+      ),
+      totalIncomeINR: Math.max(
+        0,
+        Number(incoming.totalIncomeINR ?? defaultPublicStats.totalIncomeINR),
+      ),
+      languagesSupported: Math.max(
+        1,
+        Number(
+          incoming.languagesSupported ?? defaultPublicStats.languagesSupported,
+        ),
+      ),
+      supportLabel: String(
+        incoming.supportLabel ?? defaultPublicStats.supportLabel,
+      ),
       updatedAt: new Date().toISOString(),
     };
 

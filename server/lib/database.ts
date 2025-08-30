@@ -95,7 +95,11 @@ class Database {
     return this.getDb().collection("passwords");
   }
 
-  getSettingsCollection(): Collection<{ key: string; value: any; updatedAt: Date }> {
+  getSettingsCollection(): Collection<{
+    key: string;
+    value: any;
+    updatedAt: Date;
+  }> {
     return this.getDb().collection("settings");
   }
 
@@ -140,7 +144,10 @@ class Database {
       );
 
       // Settings collection indexes
-      await this.getSettingsCollection().createIndex({ key: 1 }, { unique: true });
+      await this.getSettingsCollection().createIndex(
+        { key: 1 },
+        { unique: true },
+      );
 
       console.log("📊 Database indexes created successfully");
     } catch (error) {

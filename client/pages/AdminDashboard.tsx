@@ -934,7 +934,9 @@ export default function AdminDashboard() {
             <Card className="bg-white/90 border border-emerald-100 shadow-sm">
               <CardHeader>
                 <CardTitle>Public Site Settings</CardTitle>
-                <CardDescription>Edit homepage counters and sensor count.</CardDescription>
+                <CardDescription>
+                  Edit homepage counters and sensor count.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <PublicStatsEditor />

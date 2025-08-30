@@ -97,7 +97,12 @@ export default function Index() {
     "Community support network",
   ];
 
-  const [publicStats, setPublicStats] = useState<{ totalFarmers: number; totalIncomeINR: number; languagesSupported: number; supportLabel: string } | null>(null);
+  const [publicStats, setPublicStats] = useState<{
+    totalFarmers: number;
+    totalIncomeINR: number;
+    languagesSupported: number;
+    supportLabel: string;
+  } | null>(null);
   useEffect(() => {
     (async () => {
       try {
@@ -112,12 +117,16 @@ export default function Index() {
 
   const stats = [
     {
-      number: publicStats ? `${publicStats.totalFarmers.toLocaleString("en-IN")}+` : "—",
+      number: publicStats
+        ? `${publicStats.totalFarmers.toLocaleString("en-IN")}+`
+        : "—",
       label: "किसान साझीदार",
       description: "भारत भर में",
     },
     {
-      number: publicStats ? `₹${Math.round(publicStats.totalIncomeINR/1e7).toLocaleString("en-IN")} करोड़+` : "—",
+      number: publicStats
+        ? `₹${Math.round(publicStats.totalIncomeINR / 1e7).toLocaleString("en-IN")} करोड़+`
+        : "—",
       label: "Carbon Income",
       description: "किसानों को मिली",
     },

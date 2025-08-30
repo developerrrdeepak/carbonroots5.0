@@ -103,7 +103,9 @@ export default function Tools() {
     finalApproval: "pending",
   });
 
-  const [publicStats, setPublicStats] = useState<{ activeSensors: number } | null>(null);
+  const [publicStats, setPublicStats] = useState<{
+    activeSensors: number;
+  } | null>(null);
   useEffect(() => {
     (async () => {
       try {
@@ -197,7 +199,9 @@ export default function Tools() {
                   <p className="text-sm font-medium text-gray-600">
                     Active Sensors
                   </p>
-                  <p className="text-3xl font-bold text-green-600">{publicStats?.activeSensors ?? 24}</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {publicStats?.activeSensors ?? 24}
+                  </p>
                 </div>
                 <Wifi className="h-8 w-8 text-green-600" />
               </div>
