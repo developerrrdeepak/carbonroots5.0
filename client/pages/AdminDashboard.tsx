@@ -181,8 +181,99 @@ export default function AdminDashboard() {
   };
 
   const exportReport = (type: string) => {
-    // Mock export functionality
-    toast.success(`${type} report exported successfully!`);
+    if (type.includes("Farmer")) {
+      const headers = [
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "status", label: "Status" },
+        { key: "landSize", label: "Land Size" },
+        { key: "carbonCredits", label: "Credits" },
+      ];
+      const rows = farmers.map((f: any) => ({
+        name: f.name || f.email,
+        email: f.email,
+        status: getStatus(f),
+        landSize: getLand(f),
+        carbonCredits: getCredits(f),
+      }));
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("farmers.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF("farmers.pdf", "Farmer Report", table);
+      }
+      toast.success("Farmer report exported");
+      return;
+    }
+
+    if (type.includes("Carbon")) {
+      const headers = [
+        { key: "name", label: "Name" },
+        { key: "credits", label: "Credits" },
+        { key: "value", label: "Estimated Value (INR)" },
+      ];
+      const rows = farmers.map((f: any) => ({
+        name: f.name || f.email,
+        credits: getCredits(f),
+        value: getCredits(f) * 500,
+      }));
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("carbon-credits.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF("carbon-credits.pdf", "Carbon Credit Report", table);
+      }
+      toast.success("Carbon report exported");
+      return;
+    }
+
+    if (type.includes("Project")) {
+      const headers = [
+        { key: "name", label: "Project" },
+        { key: "type", label: "Type" },
+        { key: "participants", label: "Participants" },
+        { key: "totalCredits", label: "Total Credits" },
+        { key: "status", label: "Status" },
+      ];
+      const rows = projects;
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("projects.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r: any) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF("projects.pdf", "Project Report", table);
+      }
+      toast.success("Project report exported");
+      return;
+    }
+
+    toast.error("Unsupported report type");
   };
 
   const getStatus = (f: any) => (f.status ? f.status : f.verified ? "verified" : "pending");
