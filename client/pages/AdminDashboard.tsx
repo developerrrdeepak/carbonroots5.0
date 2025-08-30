@@ -782,16 +782,14 @@ export default function AdminDashboard() {
                         setVerificationBody(
                           <div className="space-y-3 text-sm">
                             <p>
-                              Upload a GeoJSON/KML boundary or paste a location
-                              to fetch NDVI.
+                              Paste a location to fetch NDVI (lat,lon)
                             </p>
-                            <input
-                              type="file"
-                              accept=".geojson,.kml"
-                              className="block w-full text-sm"
+                            <Input
+                              placeholder="Latitude,Longitude"
+                              value={satLatLon}
+                              onChange={(e) => setSatLatLon(e.target.value)}
                             />
-                            <Input placeholder="Latitude,Longitude" />
-                            <Button className="mt-2">Analyze</Button>
+                            <Button className="mt-2" onClick={analyzeSatellite}>Analyze</Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);
