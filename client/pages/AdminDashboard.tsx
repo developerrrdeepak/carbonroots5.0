@@ -37,6 +37,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import PublicStatsEditor from "@/components/admin/PublicStatsEditor";
 import { exportToCSV, exportHTMLTableAsPDF } from "@/lib/export";
 import {
   Users,
