@@ -92,6 +92,9 @@ export default function AdminDashboard() {
     requirements: "",
   });
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [verificationTitle, setVerificationTitle] = useState("");
+  const [verificationBody, setVerificationBody] = useState<React.ReactNode>(null);
 
   if (!isAuthenticated || user?.type !== "admin") {
     return <Navigate to="/" replace />;
