@@ -95,13 +95,57 @@ export default function AdminDashboard() {
     return <Navigate to="/" replace />;
   }
 
-  const handleFarmerStatusUpdate = (farmerId: string, newStatus: string) => {
-    setFarmers((prev) =>
-      prev.map((farmer) =>
-        farmer.id === farmerId ? { ...farmer, status: newStatus } : farmer,
-      ),
-    );
-    toast.success(`Farmer status updated to ${newStatus}`);
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        setLoadingFarmers(true);
+        const token = localStorage.getItem("auth_token");
+        const res = await fetch("/api/admin/farmers", {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `Failed with ${res.status}`);
+        }
+        const data = await res.json();
+        setFarmers(data.farmers || []);
+      } catch (e) {
+        console.error("Failed to fetch farmers", e);
+        toast.error("Failed to load farmers");
+      } finally {
+        setLoadingFarmers(false);
+      }
+    };
+    fetchFarmers();
+  }, []);
+
+  const handleFarmerStatusUpdate = async (farmerId: string, newStatus: string) => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch("/api/admin/farmer-status", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ farmerId, status: newStatus }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Failed with ${res.status}`);
+      }
+      setFarmers((prev) =>
+        prev.map((farmer) =>
+          farmer.id === farmerId ? { ...farmer, status: newStatus } : farmer,
+        ),
+      );
+      toast.success(`Farmer status updated to ${newStatus}`);
+    } catch (e) {
+      toast.error("Failed to update farmer status");
+      console.error(e);
+    }
   };
 
   const handleCreateProject = () => {
