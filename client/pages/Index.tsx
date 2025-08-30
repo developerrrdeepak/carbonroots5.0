@@ -97,24 +97,37 @@ export default function Index() {
     "Community support network",
   ];
 
+  const [publicStats, setPublicStats] = useState<{ totalFarmers: number; totalIncomeINR: number; languagesSupported: number; supportLabel: string } | null>(null);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/public/stats");
+        if (res.ok) {
+          const j = await res.json();
+          setPublicStats(j.stats);
+        }
+      } catch {}
+    })();
+  }, []);
+
   const stats = [
     {
-      number: "1,46,000+",
+      number: publicStats ? `${publicStats.totalFarmers.toLocaleString("en-IN")}+` : "—",
       label: "किसान साझीदार",
       description: "भारत भर में",
     },
     {
-      number: "₹50 करोड���+",
+      number: publicStats ? `₹${Math.round(publicStats.totalIncomeINR/1e7).toLocaleString("en-IN")} करोड़+` : "—",
       label: "Carbon Income",
       description: "किसानों को मिली",
     },
     {
-      number: "15+",
+      number: publicStats ? `${publicStats.languagesSupported}+` : "—",
       label: "भाषाएं",
       description: "Local language support",
     },
     {
-      number: "24/7",
+      number: publicStats ? publicStats.supportLabel : "—",
       label: "सहायता",
       description: "Customer support",
     },
@@ -323,7 +336,7 @@ export default function Index() {
                         <Languages className="h-5 w-5 text-green-600" />
                       </motion.div>
                       <h3 className="text-lg font-bold text-green-800">
-                        अपनी भाषा चुनें / Choose Your Language
+                        अपन�� भाषा चुनें / Choose Your Language
                       </h3>
                     </motion.div>
                     <motion.p
@@ -435,7 +448,7 @@ export default function Index() {
                   src: "https://images.pexels.com/photos/9799712/pexels-photo-9799712.jpeg",
                   alt: "Solar panels showcasing renewable energy and sustainability",
                   title: "नवीकरणीय ऊर्जा",
-                  subtitle: "सस्टेनेबल भविष्य",
+                  subtitle: "सस���टेनेबल भविष्य",
                   badge: "Green Tech",
                   gradientFrom: "blue-900/90",
                   gradientVia: "blue-500/30",
