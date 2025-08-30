@@ -154,6 +154,9 @@ export function createServer() {
         "GET /api/carbon/history",
         "POST /api/carbon/batch-predict",
         "GET /api/carbon/statistics",
+        "POST /api/iot/ingest",
+        "GET /api/iot/latest",
+        "POST /api/satellite/ndvi",
         ...(process.env.NODE_ENV !== "production"
           ? ["POST /api/test/email", "GET /api/test/email-status"]
           : []),
