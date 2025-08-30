@@ -197,7 +197,7 @@ export default function Tools() {
                   <p className="text-sm font-medium text-gray-600">
                     Active Sensors
                   </p>
-                  <p className="text-3xl font-bold text-green-600">{(window as any).__publicStats?.activeSensors ?? 24}</p>
+                  <p className="text-3xl font-bold text-green-600">{publicStats?.activeSensors ?? 24}</p>
                 </div>
                 <Wifi className="h-8 w-8 text-green-600" />
               </div>
