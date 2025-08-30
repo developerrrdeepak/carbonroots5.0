@@ -320,7 +320,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({ lat, lon }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || `Failed with ${res.status}`);
+      if (!res.ok)
+        throw new Error(data?.message || `Failed with ${res.status}`);
       toast.success("Satellite request submitted");
       console.log("NDVI response", data);
     } catch (e: any) {
@@ -341,7 +342,8 @@ export default function AdminDashboard() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || `Failed with ${res.status}`);
+      if (!res.ok)
+        throw new Error(data?.message || `Failed with ${res.status}`);
       toast.success("IoT payload stored");
     } catch (e: any) {
       toast.error(e.message || "Invalid IoT JSON");
@@ -781,15 +783,15 @@ export default function AdminDashboard() {
                         setVerificationTitle("Satellite Data Analysis");
                         setVerificationBody(
                           <div className="space-y-3 text-sm">
-                            <p>
-                              Paste a location to fetch NDVI (lat,lon)
-                            </p>
+                            <p>Paste a location to fetch NDVI (lat,lon)</p>
                             <Input
                               placeholder="Latitude,Longitude"
                               value={satLatLon}
                               onChange={(e) => setSatLatLon(e.target.value)}
                             />
-                            <Button className="mt-2" onClick={analyzeSatellite}>Analyze</Button>
+                            <Button className="mt-2" onClick={analyzeSatellite}>
+                              Analyze
+                            </Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);
@@ -840,7 +842,9 @@ export default function AdminDashboard() {
                               value={iotText}
                               onChange={(e) => setIotText(e.target.value)}
                             />
-                            <Button className="mt-2" onClick={validateIot}>Validate</Button>
+                            <Button className="mt-2" onClick={validateIot}>
+                              Validate
+                            </Button>
                           </div>,
                         );
                         setShowVerificationDialog(true);

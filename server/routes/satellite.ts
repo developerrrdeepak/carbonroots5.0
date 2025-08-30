@@ -16,7 +16,10 @@ async function getSentinelToken(clientId: string, clientSecret: string) {
     body,
   });
   if (!resp.ok) throw new Error(`Sentinel auth failed: ${resp.status}`);
-  const data = (await resp.json()) as { access_token: string; expires_in: number };
+  const data = (await resp.json()) as {
+    access_token: string;
+    expires_in: number;
+  };
   return data.access_token;
 }
 
@@ -38,25 +41,39 @@ export const getNDVI: RequestHandler = async (req, res) => {
       Number.isNaN(latitude) ||
       Number.isNaN(longitude)
     ) {
-      return res.status(400).json({ success: false, message: "Valid lat and lon are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Valid lat and lon are required" });
     }
 
     const provider = process.env.SATELLITE_PROVIDER;
     if (provider !== "sentinelhub") {
-      return res.status(501).json({ success: false, message: "Set SATELLITE_PROVIDER=sentinelhub to enable this endpoint" });
+      return res
+        .status(501)
+        .json({
+          success: false,
+          message: "Set SATELLITE_PROVIDER=sentinelhub to enable this endpoint",
+        });
     }
 
     const clientId = process.env.SH_CLIENT_ID;
     const clientSecret = process.env.SH_CLIENT_SECRET;
     if (!clientId || !clientSecret) {
-      return res.status(501).json({ success: false, message: "Missing SH_CLIENT_ID/SH_CLIENT_SECRET env vars" });
+      return res
+        .status(501)
+        .json({
+          success: false,
+          message: "Missing SH_CLIENT_ID/SH_CLIENT_SECRET env vars",
+        });
     }
 
     const token = await getSentinelToken(clientId, clientSecret);
 
     const now = new Date();
     const end = to ? new Date(to) : now;
-    const start = from ? new Date(from) : new Date(now.getTime() - 30 * 24 * 3600 * 1000);
+    const start = from
+      ? new Date(from)
+      : new Date(now.getTime() - 30 * 24 * 3600 * 1000);
 
     const bbox = pointBBox(latitude, longitude);
 
@@ -104,13 +121,21 @@ export const getNDVI: RequestHandler = async (req, res) => {
 
     const stats = (await resp.json()) as any;
     // Extract mean B04 and B08 from the first interval if available
-    const intervals = stats.data?.[0]?.dimensions?.time || stats.data?.[0]?.intervals || stats.data || [];
+    const intervals =
+      stats.data?.[0]?.dimensions?.time ||
+      stats.data?.[0]?.intervals ||
+      stats.data ||
+      [];
     const first = Array.isArray(intervals) ? intervals[0] : null;
     const b04Mean = first?.outputs?.default?.bands?.B04?.stats?.mean ?? null;
     const b08Mean = first?.outputs?.default?.bands?.B08?.stats?.mean ?? null;
 
     let ndvi: number | null = null;
-    if (typeof b04Mean === "number" && typeof b08Mean === "number" && b08Mean + b04Mean !== 0) {
+    if (
+      typeof b04Mean === "number" &&
+      typeof b08Mean === "number" &&
+      b08Mean + b04Mean !== 0
+    ) {
       ndvi = (b08Mean - b04Mean) / (b08Mean + b04Mean);
     }
 
@@ -126,6 +151,11 @@ export const getNDVI: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("❌ [SATELLITE NDVI] Error:", error);
-    res.status(500).json({ success: false, message: error?.message || "Internal server error" });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: error?.message || "Internal server error",
+      });
   }
 };

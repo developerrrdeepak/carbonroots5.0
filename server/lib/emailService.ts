@@ -544,7 +544,13 @@ Carbon Roots
   // Admin notification for new farmer registration
   async sendAdminNewFarmerEmail(
     adminEmail: string,
-    farmer: { email: string; name?: string; phone?: string; location?: any; createdAt?: Date },
+    farmer: {
+      email: string;
+      name?: string;
+      phone?: string;
+      location?: any;
+      createdAt?: Date;
+    },
   ): Promise<boolean> {
     try {
       const subject = `New Farmer Registration: ${farmer.name || farmer.email}`;
@@ -556,17 +562,19 @@ Carbon Roots
             <p><strong>Name:</strong> ${farmer.name || "-"}</p>
             <p><strong>Email:</strong> ${farmer.email}</p>
             <p><strong>Phone:</strong> ${farmer.phone || "-"}</p>
-            <p><strong>Location:</strong> ${typeof farmer.location === "string" ? farmer.location : (farmer.location?.state || farmer.location?.pincode || "-")}</p>
+            <p><strong>Location:</strong> ${typeof farmer.location === "string" ? farmer.location : farmer.location?.state || farmer.location?.pincode || "-"}</p>
             <p><strong>Registered At:</strong> ${(farmer.createdAt ? new Date(farmer.createdAt) : new Date()).toISOString()}</p>
           </div>
           <p style=\"margin-top:16px;\">
-            Open Admin Dashboard: ${(process.env.CLIENT_URL || "http://localhost:8080")}/admin
+            Open Admin Dashboard: ${process.env.CLIENT_URL || "http://localhost:8080"}/admin
           </p>
         </div>
       `;
 
       if (!this.isConfigured) {
-        console.log(`\n📣 [ADMIN NOTIFY] New farmer registered: ${farmer.email}`);
+        console.log(
+          `\n📣 [ADMIN NOTIFY] New farmer registered: ${farmer.email}`,
+        );
         return true;
       }
 
@@ -579,7 +587,9 @@ Carbon Roots
         subject,
         html,
       });
-      console.log(`✅ [SENDGRID] Admin notified for new farmer: ${farmer.email}`);
+      console.log(
+        `✅ [SENDGRID] Admin notified for new farmer: ${farmer.email}`,
+      );
       return true;
     } catch (error) {
       console.error("❌ [SENDGRID] Failed to send admin notification:", error);

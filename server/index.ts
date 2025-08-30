@@ -23,7 +23,7 @@ import {
   getModelInfo,
   getFarmerCarbonHistory,
   batchPredictCarbon,
-  getCarbonStatistics
+  getCarbonStatistics,
 } from "./routes/carbon";
 import { ingestSensorData, getLatestSensorData } from "./routes/iot";
 import { getNDVI } from "./routes/satellite";
