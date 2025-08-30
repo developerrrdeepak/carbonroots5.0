@@ -76,6 +76,7 @@ export function createServer() {
   // Admin routes (protected)
   app.get("/api/admin/farmers", getFarmers);
   app.put("/api/admin/farmer-status", updateFarmerStatus);
+  app.put("/api/admin/stats", (await import("./routes/settings")).updatePublicStats);
 
   // Carbon prediction routes (protected)
   app.post("/api/carbon/predict", predictCarbon);
