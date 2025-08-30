@@ -103,6 +103,20 @@ export default function Tools() {
     finalApproval: "pending",
   });
 
+  const [publicStats, setPublicStats] = useState<{ activeSensors: number } | null>(null);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/public/stats");
+        if (res.ok) {
+          const j = await res.json();
+          setPublicStats(j.stats);
+          (window as any).__publicStats = j.stats;
+        }
+      } catch {}
+    })();
+  }, []);
+
   // Mock IoT sensor simulation
   useEffect(() => {
     const interval = setInterval(() => {
