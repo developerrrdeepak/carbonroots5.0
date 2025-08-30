@@ -83,6 +83,13 @@ export function createServer() {
   app.post("/api/carbon/batch-predict", batchPredictCarbon);
   app.get("/api/carbon/statistics", getCarbonStatistics);
 
+  // IoT routes
+  app.post("/api/iot/ingest", ingestSensorData);
+  app.get("/api/iot/latest", getLatestSensorData);
+
+  // Satellite routes
+  app.post("/api/satellite/ndvi", getNDVI);
+
   // Test routes (development only)
   if (process.env.NODE_ENV !== "production") {
     app.post("/api/test/email", testEmail);
