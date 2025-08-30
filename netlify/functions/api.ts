@@ -22,7 +22,9 @@ async function getDb(): Promise<Db> {
   await cachedClient.connect();
   cachedDb = cachedClient.db(DB_NAME);
   // Ensure TTL index for OTPs
-  await cachedDb.collection("otps").createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
+  await cachedDb
+    .collection("otps")
+    .createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
   return cachedDb;
 }
 
@@ -166,7 +168,14 @@ export const handler: Handler = async (event) => {
     if (path === "/api/auth/send-otp" && method === "POST") {
       const { email } = body as { email?: string };
       if (!email || !isValidEmail(email)) {
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "Valid email is required" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Valid email is required",
+          }),
+        };
       }
 
       const db = await getDb();
@@ -182,11 +191,21 @@ export const handler: Handler = async (event) => {
 
       const sent = await sendOTPEmail(email, otp);
       if (!sent) {
-        return { statusCode: 500, headers, body: JSON.stringify({ success: false, message: "Failed to send OTP" }) };
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Failed to send OTP",
+          }),
+        };
       }
 
       const response: any = { success: true, message: "OTP sent successfully" };
-      if (process.env.NODE_ENV === "development" && process.env.DEBUG_AUTH === "true") {
+      if (
+        process.env.NODE_ENV === "development" &&
+        process.env.DEBUG_AUTH === "true"
+      ) {
         response.otp = otp;
       }
       return { statusCode: 200, headers, body: JSON.stringify(response) };
@@ -194,9 +213,20 @@ export const handler: Handler = async (event) => {
 
     // Verify OTP and login/create farmer
     if (path === "/api/auth/verify-otp" && method === "POST") {
-      const { email, otp, registrationData } = body as { email?: string; otp?: string; registrationData?: Partial<FarmerDoc> };
+      const { email, otp, registrationData } = body as {
+        email?: string;
+        otp?: string;
+        registrationData?: Partial<FarmerDoc>;
+      };
       if (!email || !otp) {
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "Email and OTP are required" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Email and OTP are required",
+          }),
+        };
       }
 
       const db = await getDb();
@@ -205,14 +235,29 @@ export const handler: Handler = async (event) => {
 
       const record = await otps.findOne({ email, type: "login" });
       if (!record) {
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "OTP not found or expired" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "OTP not found or expired",
+          }),
+        };
       }
       if (record.expires.getTime() < Date.now()) {
         await otps.deleteOne({ email, type: "login" });
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "OTP has expired" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ success: false, message: "OTP has expired" }),
+        };
       }
       if (record.otp !== otp) {
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "Invalid OTP" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ success: false, message: "Invalid OTP" }),
+        };
       }
 
       await otps.deleteOne({ email, type: "login" });
@@ -234,7 +279,11 @@ export const handler: Handler = async (event) => {
           farmingType: registrationData?.farmingType || "conventional",
           primaryCrops: registrationData?.primaryCrops || [],
           irrigationType: registrationData?.irrigationType || "rain_fed",
-          location: registrationData?.location || { address: "", pincode: "", state: "" },
+          location: registrationData?.location || {
+            address: "",
+            pincode: "",
+            state: "",
+          },
           interestedProjects: registrationData?.interestedProjects || [],
           sustainablePractices: registrationData?.sustainablePractices || [],
           estimatedIncome: 0,
@@ -269,22 +318,54 @@ export const handler: Handler = async (event) => {
         },
       };
 
-      const token = signToken({ type: "farmer", userId: user.farmer.id, email: user.farmer.email });
+      const token = signToken({
+        type: "farmer",
+        userId: user.farmer.id,
+        email: user.farmer.email,
+      });
 
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, user, token }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, user, token }),
+      };
     }
 
     // Admin login (env based)
     if (path === "/api/auth/admin-login" && method === "POST") {
       const { email, password } = body as { email?: string; password?: string };
       if (!email || !password) {
-        return { statusCode: 400, headers, body: JSON.stringify({ success: false, message: "Email and password are required" }) };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Email and password are required",
+          }),
+        };
       }
       if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-        return { statusCode: 500, headers, body: JSON.stringify({ success: false, message: "Admin auth not configured" }) };
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Admin auth not configured",
+          }),
+        };
       }
-      if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
-        return { statusCode: 401, headers, body: JSON.stringify({ success: false, message: "Invalid credentials" }) };
+      if (
+        email !== process.env.ADMIN_EMAIL ||
+        password !== process.env.ADMIN_PASSWORD
+      ) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Invalid credentials",
+          }),
+        };
       }
 
       const admin = {
@@ -295,8 +376,16 @@ export const handler: Handler = async (event) => {
         createdAt: new Date(),
       };
       const user = { type: "admin" as const, admin };
-      const token = signToken({ type: "admin", userId: admin.id, email: admin.email });
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, user, token }) };
+      const token = signToken({
+        type: "admin",
+        userId: admin.id,
+        email: admin.email,
+      });
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, user, token }),
+      };
     }
 
     // Verify token
@@ -305,12 +394,32 @@ export const handler: Handler = async (event) => {
       const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
       const payload = token ? parseToken(token) : null;
       if (!payload) {
-        return { statusCode: 401, headers, body: JSON.stringify({ success: false, message: "Invalid or missing token" }) };
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Invalid or missing token",
+          }),
+        };
       }
 
       if (payload.type === "admin") {
-        const user = { type: "admin" as const, admin: { id: payload.userId, email: payload.email, name: "System Admin", role: "admin", createdAt: new Date() } };
-        return { statusCode: 200, headers, body: JSON.stringify({ success: true, user }) };
+        const user = {
+          type: "admin" as const,
+          admin: {
+            id: payload.userId,
+            email: payload.email,
+            name: "System Admin",
+            role: "admin",
+            createdAt: new Date(),
+          },
+        };
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ success: true, user }),
+        };
       }
 
       // For farmer, fetch latest profile
@@ -318,7 +427,11 @@ export const handler: Handler = async (event) => {
       const farmers = db.collection<FarmerDoc>("farmers");
       const farmer = await farmers.findOne({ email: payload.email });
       if (!farmer) {
-        return { statusCode: 401, headers, body: JSON.stringify({ success: false, message: "User not found" }) };
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ success: false, message: "User not found" }),
+        };
       }
       const user = {
         type: "farmer" as const,
@@ -342,7 +455,11 @@ export const handler: Handler = async (event) => {
           updatedAt: farmer.updatedAt,
         },
       };
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, user }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, user }),
+      };
     }
 
     // Update farmer profile
@@ -351,7 +468,14 @@ export const handler: Handler = async (event) => {
       const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
       const payload = token ? parseToken(token) : null;
       if (!payload || payload.type !== "farmer") {
-        return { statusCode: 401, headers, body: JSON.stringify({ success: false, message: "Invalid token or user type" }) };
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            message: "Invalid token or user type",
+          }),
+        };
       }
 
       const updates = body || {};
@@ -365,7 +489,11 @@ export const handler: Handler = async (event) => {
 
       const farmer = result.value;
       if (!farmer) {
-        return { statusCode: 404, headers, body: JSON.stringify({ success: false, message: "Farmer not found" }) };
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ success: false, message: "Farmer not found" }),
+        };
       }
 
       const user = {
@@ -390,25 +518,44 @@ export const handler: Handler = async (event) => {
           updatedAt: farmer.updatedAt,
         },
       };
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, user }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, user }),
+      };
     }
 
     // Logout (no-op for JWT)
     if (path === "/api/auth/logout" && method === "POST") {
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: "Logged out" }) };
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, message: "Logged out" }),
+      };
     }
 
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ success: false, message: `API endpoint not found: ${method} ${path}` }),
+      body: JSON.stringify({
+        success: false,
+        message: `API endpoint not found: ${method} ${path}`,
+      }),
     };
   } catch (error: any) {
     console.error("🚨 [NETLIFY ERROR]", error);
     return {
       statusCode: 500,
-      headers: typeof preflight === "object" ? (preflight as any).headers || preflight : {},
-      body: JSON.stringify({ success: false, message: "Internal server error", error: process.env.NODE_ENV !== "production" ? error?.message : undefined }),
+      headers:
+        typeof preflight === "object"
+          ? (preflight as any).headers || preflight
+          : {},
+      body: JSON.stringify({
+        success: false,
+        message: "Internal server error",
+        error:
+          process.env.NODE_ENV !== "production" ? error?.message : undefined,
+      }),
     };
   }
 };
