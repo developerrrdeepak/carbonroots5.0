@@ -334,22 +334,26 @@ export default function AdminDashboard() {
                           {farmer.name}
                         </TableCell>
                         <TableCell>{farmer.email}</TableCell>
-                        <TableCell>{farmer.location}</TableCell>
-                        <TableCell>{farmer.landSize} Ha</TableCell>
+                        <TableCell>{
+                          typeof farmer.location === "string"
+                            ? farmer.location
+                            : (farmer.location?.state || farmer.location?.pincode || "-")
+                        }</TableCell>
+                        <TableCell>{getLand(farmer)} Ha</TableCell>
                         <TableCell>
                           <Badge
                             variant={
-                              farmer.status === "verified"
+                              getStatus(farmer) === "verified"
                                 ? "default"
-                                : farmer.status === "pending"
+                                : getStatus(farmer) === "pending"
                                   ? "secondary"
                                   : "destructive"
                             }
                           >
-                            {farmer.status}
+                            {getStatus(farmer)}
                           </Badge>
                         </TableCell>
-                        <TableCell>{farmer.carbonCredits}</TableCell>
+                        <TableCell>{getCredits(farmer)}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -359,7 +363,7 @@ export default function AdminDashboard() {
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            {farmer.status === "pending" && (
+                            {getStatus(farmer) === "pending" && (
                               <>
                                 <Button
                                   size="sm"
@@ -777,12 +781,12 @@ export default function AdminDashboard() {
                     <Label>Status</Label>
                     <Badge
                       variant={
-                        selectedFarmer.status === "verified"
+                        getStatus(selectedFarmer) === "verified"
                           ? "default"
                           : "secondary"
                       }
                     >
-                      {selectedFarmer.status}
+                      {getStatus(selectedFarmer)}
                     </Badge>
                   </div>
                   <div>
@@ -792,7 +796,7 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                 </div>
-                {selectedFarmer.status === "pending" && (
+                {getStatus(selectedFarmer) === "pending" && (
                   <div className="flex space-x-2 pt-4">
                     <Button
                       onClick={() => {
