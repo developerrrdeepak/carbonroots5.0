@@ -305,6 +305,49 @@ export default function AdminDashboard() {
 
   const stats = calculateStats();
 
+  const analyzeSatellite = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const [latStr, lonStr] = satLatLon.split(",");
+      const lat = parseFloat(latStr);
+      const lon = parseFloat(lonStr);
+      const res = await fetch("/api/satellite/ndvi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ lat, lon }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || `Failed with ${res.status}`);
+      toast.success("Satellite request submitted");
+      console.log("NDVI response", data);
+    } catch (e: any) {
+      toast.error(e.message || "Satellite analysis failed");
+    }
+  };
+
+  const validateIot = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const payload = JSON.parse(iotText || "{}");
+      const res = await fetch("/api/iot/ingest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || `Failed with ${res.status}`);
+      toast.success("IoT payload stored");
+    } catch (e: any) {
+      toast.error(e.message || "Invalid IoT JSON");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4">
       <div className="max-w-7xl mx-auto">
