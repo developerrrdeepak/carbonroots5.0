@@ -714,19 +714,75 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("Satellite Data Analysis");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>Upload a GeoJSON/KML boundary or paste a location to fetch NDVI.</p>
+                            <input type="file" accept=".geojson,.kml" className="block w-full text-sm" />
+                            <Input placeholder="Latitude,Longitude" />
+                            <Button className="mt-2">Analyze</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <Eye className="h-4 w-4 mr-2" />
                       Satellite Data Analysis
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("Field Verification Reports");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>Upload field images or PDFs to attach to farmer records.</p>
+                            <input type="file" accept=".pdf,.jpg,.png" multiple className="block w-full text-sm" />
+                            <Button className="mt-2">Upload</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <FileText className="h-4 w-4 mr-2" />
                       Field Verification Reports
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("IoT Sensor Data");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>Paste IoT payload (JSON) for quick validation.</p>
+                            <Textarea placeholder='{"soilMoisture": 23.4, "ph": 6.8}' rows={6} />
+                            <Button className="mt-2">Validate</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <BarChart3 className="h-4 w-4 mr-2" />
                       IoT Sensor Data
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("AI Verification Engine");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>Run heuristic checks on farmer profile and activity logs.</p>
+                            <Button>Run Checks</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       AI Verification Engine
                     </Button>
