@@ -25,6 +25,8 @@ import {
   batchPredictCarbon,
   getCarbonStatistics
 } from "./routes/carbon";
+import { ingestSensorData, getLatestSensorData } from "./routes/iot";
+import { getNDVI } from "./routes/satellite";
 
 export function createServer() {
   const app = express();
