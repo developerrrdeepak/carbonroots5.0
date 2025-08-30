@@ -183,7 +183,7 @@ class EmailService {
               </div>
               
               <div class="instructions">
-                <h3>🔐 कैसे use करें:</h3>
+                <h3>�� कैसे use करें:</h3>
                 <p>1. Carbon Roots app में वापस जाएं<br>
                 2. यह 6-digit code enter करें<br>
                 3. "Verify OTP" पर click करें</p>
@@ -500,7 +500,7 @@ Carbon Roots - किसानों के लिए Carbon Income का न�
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #10b981;">Password Reset Request</h2>
             <p>आपने password reset की request की है।</p>
-            <p>नीचे दिए गए link पर click करके नया password set करें:</p>
+            <p>नीचे दिए गए link पर click करके नया password set ���रें:</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" style="background: #10b981; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px;">
                 Reset Password
@@ -537,6 +537,52 @@ Carbon Roots
         `❌ [SENDGRID] Failed to send password reset email to ${email}:`,
         error,
       );
+      return false;
+    }
+  }
+
+  // Admin notification for new farmer registration
+  async sendAdminNewFarmerEmail(
+    adminEmail: string,
+    farmer: { email: string; name?: string; phone?: string; location?: any; createdAt?: Date },
+  ): Promise<boolean> {
+    try {
+      const subject = `New Farmer Registration: ${farmer.name || farmer.email}`;
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
+          <h2 style=\"color:#065f46;\">New Farmer Registration</h2>
+          <p>A new farmer has registered on the platform. Review and verify in the Admin Dashboard.</p>
+          <div style=\"background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:16px;\">
+            <p><strong>Name:</strong> ${farmer.name || "-"}</p>
+            <p><strong>Email:</strong> ${farmer.email}</p>
+            <p><strong>Phone:</strong> ${farmer.phone || "-"}</p>
+            <p><strong>Location:</strong> ${typeof farmer.location === "string" ? farmer.location : (farmer.location?.state || farmer.location?.pincode || "-")}</p>
+            <p><strong>Registered At:</strong> ${(farmer.createdAt ? new Date(farmer.createdAt) : new Date()).toISOString()}</p>
+          </div>
+          <p style=\"margin-top:16px;\">
+            Open Admin Dashboard: ${(process.env.CLIENT_URL || "http://localhost:8080")}/admin
+          </p>
+        </div>
+      `;
+
+      if (!this.isConfigured) {
+        console.log(`\n📣 [ADMIN NOTIFY] New farmer registered: ${farmer.email}`);
+        return true;
+      }
+
+      await sgMail.send({
+        to: adminEmail,
+        from: {
+          email: process.env.SENDGRID_FROM_EMAIL || "noreply@carbonroots.com",
+          name: "Carbon Roots",
+        },
+        subject,
+        html,
+      });
+      console.log(`✅ [SENDGRID] Admin notified for new farmer: ${farmer.email}`);
+      return true;
+    } catch (error) {
+      console.error("❌ [SENDGRID] Failed to send admin notification:", error);
       return false;
     }
   }
