@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { exportToCSV, exportHTMLTableAsPDF } from "@/lib/export";
 import {
   Users,
   FileText,
@@ -54,41 +55,7 @@ import {
 } from "lucide-react";
 
 // Mock data - in real app this would come from API
-const mockFarmers = [
-  {
-    id: "1",
-    name: "Rajesh Kumar",
-    email: "rajesh@example.com",
-    phone: "+91 98765 43210",
-    location: "Punjab",
-    landSize: 5.2,
-    status: "verified",
-    carbonCredits: 12.5,
-    joinedDate: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Priya Sharma",
-    email: "priya@example.com",
-    phone: "+91 87654 32109",
-    location: "Haryana",
-    landSize: 3.8,
-    status: "pending",
-    carbonCredits: 0,
-    joinedDate: "2024-02-20",
-  },
-  {
-    id: "3",
-    name: "Amit Singh",
-    email: "amit@example.com",
-    phone: "+91 76543 21098",
-    location: "Uttar Pradesh",
-    landSize: 7.1,
-    status: "verified",
-    carbonCredits: 18.7,
-    joinedDate: "2024-01-08",
-  },
-];
+const mockFarmers: any[] = [];
 
 const mockProjects = [
   {
@@ -114,6 +81,7 @@ const mockProjects = [
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [farmers, setFarmers] = useState(mockFarmers);
+  const [loadingFarmers, setLoadingFarmers] = useState(false);
   const [projects, setProjects] = useState(mockProjects);
   const [selectedFarmer, setSelectedFarmer] = useState<any>(null);
   const [newProject, setNewProject] = useState({
@@ -124,18 +92,69 @@ export default function AdminDashboard() {
     requirements: "",
   });
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [verificationTitle, setVerificationTitle] = useState("");
+  const [verificationBody, setVerificationBody] =
+    useState<React.ReactNode>(null);
 
   if (!isAuthenticated || user?.type !== "admin") {
     return <Navigate to="/" replace />;
   }
 
-  const handleFarmerStatusUpdate = (farmerId: string, newStatus: string) => {
-    setFarmers((prev) =>
-      prev.map((farmer) =>
-        farmer.id === farmerId ? { ...farmer, status: newStatus } : farmer,
-      ),
-    );
-    toast.success(`Farmer status updated to ${newStatus}`);
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        setLoadingFarmers(true);
+        const token = localStorage.getItem("auth_token");
+        const res = await fetch("/api/admin/farmers", {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `Failed with ${res.status}`);
+        }
+        const data = await res.json();
+        setFarmers(data.farmers || []);
+      } catch (e) {
+        console.error("Failed to fetch farmers", e);
+        toast.error("Failed to load farmers");
+      } finally {
+        setLoadingFarmers(false);
+      }
+    };
+    fetchFarmers();
+  }, []);
+
+  const handleFarmerStatusUpdate = async (
+    farmerId: string,
+    newStatus: string,
+  ) => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch("/api/admin/farmer-status", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ farmerId, status: newStatus }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Failed with ${res.status}`);
+      }
+      setFarmers((prev) =>
+        prev.map((farmer) =>
+          farmer.id === farmerId ? { ...farmer, status: newStatus } : farmer,
+        ),
+      );
+      toast.success(`Farmer status updated to ${newStatus}`);
+    } catch (e) {
+      toast.error("Failed to update farmer status");
+      console.error(e);
+    }
   };
 
   const handleCreateProject = () => {
@@ -166,17 +185,118 @@ export default function AdminDashboard() {
   };
 
   const exportReport = (type: string) => {
-    // Mock export functionality
-    toast.success(`${type} report exported successfully!`);
+    if (type.includes("Farmer")) {
+      const headers = [
+        { key: "name", label: "Name" },
+        { key: "email", label: "Email" },
+        { key: "status", label: "Status" },
+        { key: "landSize", label: "Land Size" },
+        { key: "carbonCredits", label: "Credits" },
+      ];
+      const rows = farmers.map((f: any) => ({
+        name: f.name || f.email,
+        email: f.email,
+        status: getStatus(f),
+        landSize: getLand(f),
+        carbonCredits: getCredits(f),
+      }));
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("farmers.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF("farmers.pdf", "Farmer Report", table);
+      }
+      toast.success("Farmer report exported");
+      return;
+    }
+
+    if (type.includes("Carbon")) {
+      const headers = [
+        { key: "name", label: "Name" },
+        { key: "credits", label: "Credits" },
+        { key: "value", label: "Estimated Value (INR)" },
+      ];
+      const rows = farmers.map((f: any) => ({
+        name: f.name || f.email,
+        credits: getCredits(f),
+        value: getCredits(f) * 500,
+      }));
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("carbon-credits.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF(
+          "carbon-credits.pdf",
+          "Carbon Credit Report",
+          table,
+        );
+      }
+      toast.success("Carbon report exported");
+      return;
+    }
+
+    if (type.includes("Project")) {
+      const headers = [
+        { key: "name", label: "Project" },
+        { key: "type", label: "Type" },
+        { key: "participants", label: "Participants" },
+        { key: "totalCredits", label: "Total Credits" },
+        { key: "status", label: "Status" },
+      ];
+      const rows = projects;
+      if (type.toLowerCase().includes("excel")) {
+        exportToCSV("projects.csv", rows, headers);
+      } else {
+        const table = `<table><thead><tr>${headers
+          .map((h) => `<th>${h.label}</th>`)
+          .join("")}</tr></thead><tbody>${rows
+          .map(
+            (r: any) =>
+              `<tr>${headers
+                .map((h) => `<td>${(r as any)[h.key]}</td>`)
+                .join("")}</tr>`,
+          )
+          .join("")}</tbody></table>`;
+        exportHTMLTableAsPDF("projects.pdf", "Project Report", table);
+      }
+      toast.success("Project report exported");
+      return;
+    }
+
+    toast.error("Unsupported report type");
   };
+
+  const getStatus = (f: any) =>
+    f.status ? f.status : f.verified ? "verified" : "pending";
+  const getCredits = (f: any) =>
+    typeof f.carbonCredits === "number" ? f.carbonCredits : 0;
+  const getLand = (f: any) => (typeof f.landSize === "number" ? f.landSize : 0);
 
   const calculateStats = () => {
     const totalFarmers = farmers.length;
     const verifiedFarmers = farmers.filter(
-      (f) => f.status === "verified",
+      (f) => getStatus(f) === "verified",
     ).length;
-    const totalCredits = farmers.reduce((sum, f) => sum + f.carbonCredits, 0);
-    const totalLand = farmers.reduce((sum, f) => sum + f.landSize, 0);
+    const totalCredits = farmers.reduce((sum, f) => sum + getCredits(f), 0);
+    const totalLand = farmers.reduce((sum, f) => sum + getLand(f), 0);
 
     return { totalFarmers, verifiedFarmers, totalCredits, totalLand };
   };
@@ -306,69 +426,86 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {farmers.map((farmer) => (
-                      <TableRow key={farmer.id}>
-                        <TableCell className="font-medium">
-                          {farmer.name}
-                        </TableCell>
-                        <TableCell>{farmer.email}</TableCell>
-                        <TableCell>{farmer.location}</TableCell>
-                        <TableCell>{farmer.landSize} Ha</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              farmer.status === "verified"
-                                ? "default"
-                                : farmer.status === "pending"
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {farmer.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{farmer.carbonCredits}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setSelectedFarmer(farmer)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            {farmer.status === "pending" && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() =>
-                                    handleFarmerStatusUpdate(
-                                      farmer.id,
-                                      "verified",
-                                    )
-                                  }
-                                  className="bg-green-600 hover:bg-green-700"
-                                >
-                                  <CheckCircle className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() =>
-                                    handleFarmerStatusUpdate(
-                                      farmer.id,
-                                      "rejected",
-                                    )
-                                  }
-                                >
-                                  <XCircle className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
+                    {loadingFarmers && (
+                      <TableRow>
+                        <TableCell colSpan={7}>Loading farmers...</TableCell>
                       </TableRow>
-                    ))}
+                    )}
+                    {!loadingFarmers && farmers.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7}>No farmers found</TableCell>
+                      </TableRow>
+                    )}
+                    {!loadingFarmers &&
+                      farmers.map((farmer) => (
+                        <TableRow key={farmer.id}>
+                          <TableCell className="font-medium">
+                            {farmer.name || farmer.email}
+                          </TableCell>
+                          <TableCell>{farmer.email}</TableCell>
+                          <TableCell>
+                            {typeof farmer.location === "string"
+                              ? farmer.location
+                              : farmer.location?.state ||
+                                farmer.location?.pincode ||
+                                "-"}
+                          </TableCell>
+                          <TableCell>{getLand(farmer)} Ha</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                getStatus(farmer) === "verified"
+                                  ? "default"
+                                  : getStatus(farmer) === "pending"
+                                    ? "secondary"
+                                    : "destructive"
+                              }
+                            >
+                              {getStatus(farmer)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{getCredits(farmer)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setSelectedFarmer(farmer)}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              {getStatus(farmer) === "pending" && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      handleFarmerStatusUpdate(
+                                        farmer.id,
+                                        "verified",
+                                      )
+                                    }
+                                    className="bg-green-600 hover:bg-green-700"
+                                  >
+                                    <CheckCircle className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() =>
+                                      handleFarmerStatusUpdate(
+                                        farmer.id,
+                                        "rejected",
+                                      )
+                                    }
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -592,19 +729,98 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("Satellite Data Analysis");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>
+                              Upload a GeoJSON/KML boundary or paste a location
+                              to fetch NDVI.
+                            </p>
+                            <input
+                              type="file"
+                              accept=".geojson,.kml"
+                              className="block w-full text-sm"
+                            />
+                            <Input placeholder="Latitude,Longitude" />
+                            <Button className="mt-2">Analyze</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <Eye className="h-4 w-4 mr-2" />
                       Satellite Data Analysis
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("Field Verification Reports");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>
+                              Upload field images or PDFs to attach to farmer
+                              records.
+                            </p>
+                            <input
+                              type="file"
+                              accept=".pdf,.jpg,.png"
+                              multiple
+                              className="block w-full text-sm"
+                            />
+                            <Button className="mt-2">Upload</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <FileText className="h-4 w-4 mr-2" />
                       Field Verification Reports
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("IoT Sensor Data");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>
+                              Paste IoT payload (JSON) for quick validation.
+                            </p>
+                            <Textarea
+                              placeholder='{"soilMoisture": 23.4, "ph": 6.8}'
+                              rows={6}
+                            />
+                            <Button className="mt-2">Validate</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <BarChart3 className="h-4 w-4 mr-2" />
                       IoT Sensor Data
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setVerificationTitle("AI Verification Engine");
+                        setVerificationBody(
+                          <div className="space-y-3 text-sm">
+                            <p>
+                              Run heuristic checks on farmer profile and
+                              activity logs.
+                            </p>
+                            <Button>Run Checks</Button>
+                          </div>,
+                        );
+                        setShowVerificationDialog(true);
+                      }}
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       AI Verification Engine
                     </Button>
@@ -742,35 +958,39 @@ export default function AdminDashboard() {
                   <div>
                     <Label>Location</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.location}
+                      {typeof selectedFarmer.location === "string"
+                        ? selectedFarmer.location
+                        : selectedFarmer.location?.state ||
+                          selectedFarmer.location?.pincode ||
+                          "-"}
                     </p>
                   </div>
                   <div>
                     <Label>Land Size</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.landSize} hectares
+                      {getLand(selectedFarmer)} hectares
                     </p>
                   </div>
                   <div>
                     <Label>Status</Label>
                     <Badge
                       variant={
-                        selectedFarmer.status === "verified"
+                        getStatus(selectedFarmer) === "verified"
                           ? "default"
                           : "secondary"
                       }
                     >
-                      {selectedFarmer.status}
+                      {getStatus(selectedFarmer)}
                     </Badge>
                   </div>
                   <div>
                     <Label>Carbon Credits</Label>
                     <p className="text-sm text-gray-600">
-                      {selectedFarmer.carbonCredits}
+                      {getCredits(selectedFarmer)}
                     </p>
                   </div>
                 </div>
-                {selectedFarmer.status === "pending" && (
+                {getStatus(selectedFarmer) === "pending" && (
                   <div className="flex space-x-2 pt-4">
                     <Button
                       onClick={() => {
@@ -796,6 +1016,18 @@ export default function AdminDashboard() {
             </DialogContent>
           </Dialog>
         )}
+
+        <Dialog
+          open={showVerificationDialog}
+          onOpenChange={setShowVerificationDialog}
+        >
+          <DialogContent className="max-w-xl">
+            <DialogHeader>
+              <DialogTitle>{verificationTitle}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">{verificationBody}</div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

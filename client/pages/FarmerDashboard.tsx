@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,10 @@ import {
   Loader2,
 } from "lucide-react";
 import { predictCarbon, validateCarbonInput } from "../api/carbon";
-import { CarbonPredictionInput, CarbonPredictionResponse } from "../../shared/carbon";
+import {
+  CarbonPredictionInput,
+  CarbonPredictionResponse,
+} from "../../shared/carbon";
 
 export default function FarmerDashboard() {
   const { user, isAuthenticated, updateProfile } = useAuth();
@@ -64,7 +67,8 @@ export default function FarmerDashboard() {
   });
   const [loading, setLoading] = useState(false);
   const [profileComplete, setProfileComplete] = useState(false);
-  const [carbonPrediction, setCarbonPrediction] = useState<CarbonPredictionResponse | null>(null);
+  const [carbonPrediction, setCarbonPrediction] =
+    useState<CarbonPredictionResponse | null>(null);
   const [carbonLoading, setCarbonLoading] = useState(false);
   const [carbonError, setCarbonError] = useState<string | null>(null);
 
@@ -154,7 +158,11 @@ export default function FarmerDashboard() {
       toast.success("Farm data submitted successfully!");
     } catch (error) {
       console.error("Carbon prediction error:", error);
-      setCarbonError(error instanceof Error ? error.message : "Failed to calculate carbon prediction");
+      setCarbonError(
+        error instanceof Error
+          ? error.message
+          : "Failed to calculate carbon prediction",
+      );
       toast.error("Failed to calculate carbon prediction");
     } finally {
       setLoading(false);
@@ -541,7 +549,9 @@ export default function FarmerDashboard() {
                     {carbonLoading ? (
                       <div className="flex items-center justify-center py-8">
                         <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-                        <span className="ml-2">Calculating carbon credits...</span>
+                        <span className="ml-2">
+                          Calculating carbon credits...
+                        </span>
                       </div>
                     ) : carbonError ? (
                       <div className="text-center py-4 text-red-600">
@@ -553,28 +563,40 @@ export default function FarmerDashboard() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Carbon Sequestration:</span>
                           <span className="font-bold text-green-600">
-                            {carbonPrediction.prediction.carbonSequestration.toFixed(1)} tCO₂e/ha
+                            {carbonPrediction.prediction.carbonSequestration.toFixed(
+                              1,
+                            )}{" "}
+                            tCO₂e/ha
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm">Confidence:</span>
                           <span className="font-medium">
-                            {(carbonPrediction.prediction.confidence * 100).toFixed(1)}%
+                            {(
+                              carbonPrediction.prediction.confidence * 100
+                            ).toFixed(1)}
+                            %
                           </span>
                         </div>
                         {carbonPrediction.credits && (
                           <>
                             <div className="flex justify-between items-center">
-                              <span className="text-sm">Estimated Credits:</span>
+                              <span className="text-sm">
+                                Estimated Credits:
+                              </span>
                               <span className="font-bold text-green-600">
-                                {carbonPrediction.credits.totalCredits.toFixed(1)}
+                                {carbonPrediction.credits.totalCredits.toFixed(
+                                  1,
+                                )}
                               </span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm">Estimated Value:</span>
                               <span className="font-bold text-green-600 flex items-center">
                                 <IndianRupee className="h-4 w-4 mr-1" />
-                                {(carbonPrediction.credits.totalCredits * 500).toLocaleString("en-IN")}
+                                {(
+                                  carbonPrediction.credits.totalCredits * 500
+                                ).toLocaleString("en-IN")}
                               </span>
                             </div>
                           </>
@@ -603,7 +625,9 @@ export default function FarmerDashboard() {
                           </div>
                           <div className="flex items-center space-x-2">
                             <Clock className="h-4 w-4 text-yellow-600" />
-                            <span className="text-sm">Awaiting Verification</span>
+                            <span className="text-sm">
+                              Awaiting Verification
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -659,7 +683,9 @@ export default function FarmerDashboard() {
                                 size="sm"
                                 className="bg-green-600 hover:bg-green-700"
                                 onClick={() => {
-                                  toast.success(`Applied to ${project.name} successfully!`);
+                                  toast.success(
+                                    `Applied to ${project.name} successfully!`,
+                                  );
                                 }}
                               >
                                 Apply
